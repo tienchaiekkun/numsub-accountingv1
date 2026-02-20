@@ -401,7 +401,7 @@ tbody tr:hover{background:var(--accent-l)}
 <div class="page" id="page-mgr-cust">
   <div class="top-bar"><div><div class="pg-title">👥 ข้อมูลลูกค้า</div><div class="pg-desc">จัดการข้อมูลลูกค้าและบริการ</div></div><button class="btn btn-p" onclick="openModal('add-cust')">+ เพิ่มลูกค้าใหม่</button></div>
   <div class="content">
-    <div class="search-lg"><span class="search-lg-icon">🔍</span><input placeholder="พิมพ์ค้นหา รหัส หรือ ชื่อลูกค้า..." /></div>
+    <div class="search-lg"><span class="search-lg-icon">🔍</span><input placeholder="พิมพ์ค้นหา รหัส หรือ ชื่อลูกค้า..." oninput="filterCustTable(this.value,'mgr-cust-tb')" /></div>
     <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/ด.</th><th>สถานะ</th><th class="text-r">ยอดค้าง</th><th></th></tr></thead>
     <tbody id="mgr-cust-tb">
       <tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">กำลังโหลด...</td></tr>
@@ -428,13 +428,9 @@ tbody tr:hover{background:var(--accent-l)}
     </div>
     <div class="search-lg">
       <span class="search-lg-icon">👤</span>
-      <input placeholder="พิมพ์ชื่อ หรือ รหัสลูกค้า..." id="mgr-cust-search" onfocus="document.getElementById('search-results').classList.add('show')" onblur="setTimeout(()=>document.getElementById('search-results').classList.remove('show'),200)" />
+      <input placeholder="พิมพ์ชื่อ หรือ รหัสลูกค้า..." id="mgr-cust-search" oninput="filterEntrySearch(this.value)" onfocus="document.getElementById('search-results').classList.add('show')" onblur="setTimeout(()=>document.getElementById('search-results').classList.remove('show'),200)" />
       <div class="search-lg-results" id="search-results">
-        <div class="search-result-item" onclick="selectCustEntry('SN0005','หจก.A','has-prev')"><span class="search-result-code">SN0005</span><strong>หจก.A</strong><span style="margin-left:auto;font-size:11px;color:var(--green)">มีประวัติ</span></div>
-        <div class="search-result-item" onclick="selectCustEntry('SN0006','บจก. การเจริญ','has-prev')"><span class="search-result-code">SN0006</span><strong>บจก. การเจริญ</strong><span style="margin-left:auto;font-size:11px;color:var(--green)">มีประวัติ</span></div>
-        <div class="search-result-item" onclick="selectCustEntry('SN0007','ห้าง 1','no-prev')"><span class="search-result-code">SN0007</span><strong>ห้าง 1</strong><span style="margin-left:auto;font-size:11px;color:var(--text-m)">ยังไม่มียอด</span></div>
-        <div class="search-result-item" onclick="selectCustEntry('SN0008','ห้าง 2','has-prev')"><span class="search-result-code">SN0008</span><strong>ห้าง 2</strong><span style="margin-left:auto;font-size:11px;color:var(--green)">มีประวัติ</span></div>
-        <div class="search-result-item" onclick="selectCustEntry('MN0105','ห้าง 3','no-prev')"><span class="search-result-code">MN0105</span><strong>ห้าง 3</strong><span style="margin-left:auto;font-size:11px;color:var(--text-m)">ยังไม่มียอด</span></div>
+        <div style="padding:14px 20px;color:var(--text-m);text-align:center">กำลังโหลดข้อมูลลูกค้า...</div>
       </div>
     </div>
 
@@ -691,7 +687,7 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="top-bar"><div><div class="pg-title">👥 ข้อมูลลูกค้า</div><div class="pg-desc">ดูข้อมูลและเพิ่มลูกค้าใหม่</div></div><button class="btn btn-p" onclick="openModal('add-cust')">+ เพิ่มลูกค้าใหม่</button></div>
   <div class="content">
     <div class="hb hb-orange mb-16 flex items-c gap-8" style="font-size:13px;color:var(--orange)">⚠️ พนักงานสามารถ <strong>เพิ่ม</strong> ลูกค้าใหม่ได้ แต่ไม่สามารถ <strong>แก้ไข</strong> ข้อมูลที่มีอยู่ (ต้องแจ้งผู้จัดการ)</div>
-    <div class="search-lg mb-16"><span class="search-lg-icon">🔍</span><input placeholder="ค้นหาลูกค้า..." /></div>
+    <div class="search-lg mb-16"><span class="search-lg-icon">🔍</span><input placeholder="ค้นหาลูกค้า..." oninput="filterCustTable(this.value,'staff-cust-tb')" /></div>
     <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/ด.</th><th>สถานะ</th><th class="text-r">ยอดค้าง</th></tr></thead>
     <tbody id="staff-cust-tb">
       <tr><td colspan="6" style="text-align:center;color:var(--text-m);padding:24px">กำลังโหลด...</td></tr>
@@ -1389,10 +1385,28 @@ function renderCustomerTables() {
 
 function renderEntrySearch() {
   const c = document.getElementById('search-results');
-  if(!c||!allCustomers.length) return;
+  if(!c) return;
+  if(!allCustomers.length) { c.innerHTML='<div style="padding:14px 20px;color:var(--text-m);text-align:center">ยังไม่มีข้อมูลลูกค้า</div>'; return; }
   c.innerHTML = allCustomers.map(cu =>
-    '<div class="search-result-item" onclick="selectCustEntry(\''+cu.code+'\',\''+cu.name+'\')"><span class="search-result-code">'+cu.code+'</span><strong>'+cu.name+'</strong></div>'
+    '<div class="search-result-item" data-search="'+cu.code+' '+cu.name+'" onclick="selectCustEntry(\''+cu.code.replace(/'/g,"\\'")+'\',\''+cu.name.replace(/'/g,"\\'")+'\')"><span class="search-result-code">'+cu.code+'</span><strong>'+cu.name+'</strong></div>'
   ).join('');
+}
+
+function filterCustTable(val, tbId) {
+  const tb = document.getElementById(tbId);
+  if (!tb) return;
+  const q = val.toLowerCase();
+  tb.querySelectorAll('tr').forEach(tr => {
+    tr.style.display = !q || tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function filterEntrySearch(val) {
+  const q = val.toLowerCase();
+  document.querySelectorAll('#search-results .search-result-item').forEach(item => {
+    const text = (item.dataset.search || item.textContent).toLowerCase();
+    item.style.display = !q || text.includes(q) ? '' : 'none';
+  });
 }
 
 async function loadDashboard(role) {
