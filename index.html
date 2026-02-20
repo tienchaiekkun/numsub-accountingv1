@@ -378,7 +378,7 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ MGR: DASHBOARD ============ -->
 <div class="page active" id="page-mgr-dash">
-  <div class="top-bar"><div><div class="pg-title">แดชบอร์ดผู้จัดการ</div><div class="pg-desc">ภาพรวมนำทรัพย์การบัญชี · ม.ค. 2569</div></div><div class="role-tag role-tag-mgr">👔 ผู้จัดการ</div></div>
+  <div class="top-bar"><div><div class="pg-title">แดชบอร์ดผู้จัดการ</div><div class="pg-desc" id="mgr-dash-month">ภาพรวมนำทรัพย์การบัญชี</div></div><div class="role-tag role-tag-mgr">👔 ผู้จัดการ</div></div>
   <div class="content">
     <div class="stats" id="mgr-stats">
       <div class="stat"><div class="stat-label">ลูกค้าทั้งหมด</div><div class="stat-val" id="mgr-s-cust">—</div><div class="stat-sub">ราย</div></div>
@@ -417,7 +417,7 @@ tbody tr:hover{background:var(--accent-l)}
     <!-- Large month/date selection -->
     <div class="card mb-24"><div class="card-body">
       <div class="form-grid" style="grid-template-columns:1fr 1fr">
-        <div class="form-group"><label class="form-label">📅 เดือน/ปี</label><select class="form-select" id="entry-month" onchange="onEntryMonthChange()"><option value="ม.ค. 69" selected>มกราคม 2569</option><option value="ก.พ. 69">กุมภาพันธ์ 2569</option><option value="ธ.ค. 68">ธันวาคม 2568</option></select></div>
+        <div class="form-group"><label class="form-label">📅 เดือน/ปี</label><select class="form-select" id="entry-month" onchange="onEntryMonthChange()"><option value="" selected>กำลังโหลด...</option></select></div>
         <div class="form-group"><label class="form-label">📆 วันที่คำนวณ</label><input type="date" class="form-input" value="2026-01-23" /></div>
       </div>
     </div></div>
@@ -442,8 +442,8 @@ tbody tr:hover{background:var(--accent-l)}
         <div class="flex items-c gap-16">
           <span style="font-size:32px">👤</span>
           <div>
-            <div style="font-weight:700;font-size:20px" id="sel-cust-name">SN0005 — หจก.A</div>
-            <div style="font-size:14px;color:var(--text-s)" id="sel-cust-sub">กำลังบันทึกยอด: ม.ค. 2569</div>
+            <div style="font-weight:700;font-size:20px" id="sel-cust-name">—</div>
+            <div style="font-size:14px;color:var(--text-s)" id="sel-cust-sub">—</div>
           </div>
         </div>
         <button class="btn btn-o btn-sm" onclick="resetEntryArea()">เปลี่ยนลูกค้า</button>
@@ -453,11 +453,11 @@ tbody tr:hover{background:var(--accent-l)}
       <div id="prev-month-banner" style="display:none;background:linear-gradient(135deg,var(--blue-l),var(--green-l));border:2px solid var(--green);border-radius:var(--rl);padding:20px 24px;margin-bottom:20px">
         <div class="flex items-c jc-b" style="margin-bottom:12px">
           <div>
-            <div style="font-weight:700;font-size:16px;color:var(--green)">📋 พบยอดเดือนก่อน (<span id="prev-month-label">ธ.ค. 68</span>)</div>
+            <div style="font-weight:700;font-size:16px;color:var(--green)">📋 พบยอดเดือนก่อน (<span id="prev-month-label">—</span>)</div>
             <div style="font-size:13px;color:var(--text-s);margin-top:4px">ระบบดึงยอดจากเดือนก่อนให้อ้างอิง</div>
           </div>
           <div style="text-align:right">
-            <div class="mono" style="font-size:26px;font-weight:700;color:var(--green)" id="prev-month-total">฿4,300</div>
+            <div class="mono" style="font-size:26px;font-weight:700;color:var(--green)" id="prev-month-total">—</div>
             <div style="font-size:11px;color:var(--text-s)">ยอดรวมเดือนก่อน</div>
           </div>
         </div>
@@ -475,7 +475,7 @@ tbody tr:hover{background:var(--accent-l)}
       </div>
 
       <!-- Service inputs -->
-      <div class="card"><div class="card-head"><div class="card-t" style="font-size:18px">📝 ใส่ยอด — <span id="entry-month-title">ม.ค. 2569</span></div><div id="entry-svc-actions"><button class="btn btn-sm btn-o" onclick="clearAllSvc()">🗑️ ล้างทั้งหมด</button></div></div><div class="card-body">
+      <div class="card"><div class="card-head"><div class="card-t" style="font-size:18px">📝 ใส่ยอด — <span id="entry-month-title">—</span></div><div id="entry-svc-actions"><button class="btn btn-sm btn-o" onclick="clearAllSvc()">🗑️ ล้างทั้งหมด</button></div></div><div class="card-body">
         <div style="font-size:15px;font-weight:700;color:var(--text-s);margin-bottom:16px">📅 บริการรายเดือน</div>
 
         <div class="svc-row-lg" data-svc="accounting"><div class="svc-name-lg">ค่าทำบัญชี</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
@@ -493,7 +493,7 @@ tbody tr:hover{background:var(--accent-l)}
 
         <!-- Total LARGE -->
         <div style="margin-top:24px;padding:24px;background:var(--surface-alt);border-radius:var(--r);border:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-size:16px;color:var(--text-s)">ยอดรวม <span id="entry-total-label">ม.ค. 2569</span></div><div style="font-size:13px;color:var(--text-m);margin-top:4px" id="entry-item-count">0 รายการ</div></div>
+          <div><div style="font-size:16px;color:var(--text-s)">ยอดรวม <span id="entry-total-label">—</span></div><div style="font-size:13px;color:var(--text-m);margin-top:4px" id="entry-item-count">0 รายการ</div></div>
           <div class="mono" style="font-size:36px;font-weight:700;color:var(--accent)" id="entry-total-val">฿0</div>
         </div>
 
@@ -511,81 +511,14 @@ tbody tr:hover{background:var(--accent-l)}
 <div class="page" id="page-mgr-approve">
   <div class="top-bar"><div><div class="pg-title">✅ อนุมัติการส่งเงิน</div><div class="pg-desc">ตรวจสอบหลักฐานและอนุมัติ</div></div><div class="role-tag role-tag-mgr">👔 ผู้จัดการเท่านั้น</div></div>
   <div class="content">
-    <div class="in-tabs mb-24"><button class="in-tab active" onclick="switchInTab(this,'approve-pending')">รออนุมัติ (3)</button><button class="in-tab" onclick="switchInTab(this,'approve-done')">อนุมัติแล้ว</button><button class="in-tab" onclick="switchInTab(this,'approve-reject')">ไม่อนุมัติ</button></div>
+    <div class="in-tabs mb-24"><button class="in-tab active" onclick="switchInTab(this,'approve-pending')">รออนุมัติ</button><button class="in-tab" onclick="switchInTab(this,'approve-done')">อนุมัติแล้ว</button><button class="in-tab" onclick="switchInTab(this,'approve-reject')">ไม่อนุมัติ</button></div>
 
     <div id="approve-pending">
-    <!-- Approval 1: with slip image -->
-    <div class="approval-card pending">
-      <div class="flex items-c jc-b" style="margin-bottom:12px">
-        <div><div style="font-weight:700;font-size:15px">หจก.A (SN0005)</div><div style="font-size:12px;color:var(--text-s)">INV-2569-0023 · 6 รายการ</div></div>
-        <div class="text-r"><div class="mono" style="font-size:20px;font-weight:700;color:var(--accent)">฿10,800</div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:12px;font-size:12px">
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:3px">🏦 เงินโอน</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ธนาคาร</div><div style="font-weight:600;margin-top:3px">กสิกรไทย</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">วันที่รับ</div><div style="font-weight:600;margin-top:3px">6 ก.พ. 2569</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">พนักงาน</div><div style="font-weight:600;margin-top:3px">สมศรี</div></div>
-      </div>
-
-      <!-- IMAGE ATTACHMENT -->
-      <div style="margin-bottom:12px">
-        <div style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">📎 หลักฐานแนบ</div>
-        <div style="display:flex;gap:8px">
-          <div style="position:relative" onclick="openImgViewer('https://placehold.co/400x600/eee/999?text=สลิป+โอนเงิน%0Aหจก.A%0A฿10,800')">
-            <img src="https://placehold.co/120x80/f5f0e8/6b5b45?text=สลิปโอน" class="approval-img" />
-            <div style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.6);color:white;font-size:9px;padding:2px 6px;border-radius:3px">🔍 ขยาย</div>
-          </div>
-        </div>
-      </div>
-      <div style="font-size:12px;color:var(--text-s)">💬 ลูกค้าโอนผ่าน KBank วันที่ 6 ก.พ.</div>
-      <div class="flex gap-8 mt-12"><button class="btn btn-g">✅ อนุมัติ</button><button class="btn btn-danger btn-sm">❌ ไม่อนุมัติ</button><button class="btn btn-ghost btn-sm">💬 ส่งกลับแก้ไข</button></div>
-    </div>
-
-    <!-- Approval 2: Cash -->
-    <div class="approval-card pending">
-      <div class="flex items-c jc-b" style="margin-bottom:12px">
-        <div><div style="font-weight:700;font-size:15px">ห้าง 1 (SN0007)</div><div style="font-size:12px;color:var(--text-s)">INV-2569-0021 · 3 รายการ</div></div>
-        <div class="text-r"><div class="mono" style="font-size:20px;font-weight:700;color:var(--accent)">฿3,530</div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:12px;font-size:12px">
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:3px">💵 เงินสด</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ธนาคาร</div><div style="font-weight:600;margin-top:3px">—</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">วันที่รับ</div><div style="font-weight:600;margin-top:3px">5 ก.พ. 2569</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">พนักงาน</div><div style="font-weight:600;margin-top:3px">สมศรี</div></div>
-      </div>
-      <div style="font-size:12px;color:var(--text-s)">💬 ไปเก็บเงินสดที่ร้าน</div>
-      <div style="font-size:11px;color:var(--text-m);margin-top:4px">📎 ไม่มีหลักฐานแนบ</div>
-      <div class="flex gap-8 mt-12"><button class="btn btn-g">✅ อนุมัติ</button><button class="btn btn-danger btn-sm">❌ ไม่อนุมัติ</button><button class="btn btn-ghost btn-sm">💬 ส่งกลับแก้ไข</button></div>
-    </div>
-
-    <!-- Approval 3: Cheque with image -->
-    <div class="approval-card pending">
-      <div class="flex items-c jc-b" style="margin-bottom:12px">
-        <div><div style="font-weight:700;font-size:15px">ห้าง 3 (MN0105)</div><div style="font-size:12px;color:var(--text-s)">INV-2569-0019 · ชำระบางส่วน</div></div>
-        <div class="text-r"><div class="mono" style="font-size:20px;font-weight:700;color:var(--accent)">฿1,470</div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:12px;font-size:12px">
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:3px">📝 เช็ค</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ธนาคาร</div><div style="font-weight:600;margin-top:3px">กรุงเทพ (BBL)</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">เลขที่เช็ค</div><div style="font-weight:600;margin-top:3px;font-family:'JetBrains Mono',monospace">CHQ-4481920</div></div>
-        <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">พนักงาน</div><div style="font-weight:600;margin-top:3px">วิชัย</div></div>
-      </div>
-      <div style="margin-bottom:12px">
-        <div style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">📎 หลักฐานแนบ</div>
-        <div style="display:flex;gap:8px">
-          <div style="position:relative" onclick="openImgViewer('https://placehold.co/400x250/eee/999?text=ภาพเช็ค%0ABBL%0ACHQ-4481920%0A฿1,470')">
-            <img src="https://placehold.co/120x80/e8f0f7/3a6a8a?text=ภาพเช็ค" class="approval-img" />
-            <div style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.6);color:white;font-size:9px;padding:2px 6px;border-radius:3px">🔍 ขยาย</div>
-          </div>
-        </div>
-      </div>
-      <div class="flex gap-8 mt-12"><button class="btn btn-g">✅ อนุมัติ</button><button class="btn btn-danger btn-sm">❌ ไม่อนุมัติ</button><button class="btn btn-ghost btn-sm">💬 ส่งกลับแก้ไข</button></div>
-    </div>
+      <div id="approve-pending-list" style="text-align:center;padding:24px;color:var(--text-m)">กำลังโหลด...</div>
     </div><!-- /approve-pending -->
 
     <div id="approve-done" style="display:none">
-      <div class="approval-card approved"><div class="flex items-c jc-b"><div><div style="font-weight:700">บจก. การเจริญ (SN0006)</div><div style="font-size:12px;color:var(--text-s)">INV-2569-0020 · 4 รายการ · โอน SCB</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿8,500</div><span class="badge b-green"><span class="dot"></span>อนุมัติแล้ว</span></div></div><div style="font-size:11px;color:var(--text-s);margin-top:8px">✅ อนุมัติเมื่อ 3 ก.พ. 2569 · โดย ผู้จัดการ</div></div>
-      <div class="approval-card approved"><div class="flex items-c jc-b"><div><div style="font-weight:700">ห้าง 3 (MN0105)</div><div style="font-size:12px;color:var(--text-s)">INV-2569-0018 · 4 รายการ · เช็ค BBL</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿4,500</div><span class="badge b-green"><span class="dot"></span>อนุมัติแล้ว</span></div></div><div style="font-size:11px;color:var(--text-s);margin-top:8px">✅ อนุมัติเมื่อ 1 ก.พ. 2569 · โดย ผู้จัดการ</div></div>
+      <div id="approve-done-list" style="text-align:center;padding:24px;color:var(--text-m)">กำลังโหลด...</div>
     </div>
 
     <div id="approve-reject" style="display:none">
@@ -600,13 +533,13 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ MGR: REPORT ============ -->
 <div class="page" id="page-mgr-report">
-  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">รายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select"><option>ม.ค. 2569</option><option>ธ.ค. 2568</option></select><button class="btn btn-o btn-sm">📥 Export</button></div></div>
+  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">รายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select" id="mgr-report-month"><option>กำลังโหลด...</option></select><button class="btn btn-o btn-sm">📥 Export</button></div></div>
   <div class="content" id="report-content-mgr">
-    <div class="stats mb-24">
-      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)">฿68,500</div></div>
-      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)">฿42,300</div></div>
-      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)">฿26,200</div></div>
-      <div class="stat"><div class="stat-label">อัตราเก็บได้</div><div class="stat-val" style="color:var(--green)">61.8%</div></div>
+    <div class="stats mb-24" id="mgr-report-stats">
+      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)" id="rpt-billed">—</div></div>
+      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)" id="rpt-paid">—</div></div>
+      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)" id="rpt-unpaid">—</div></div>
+      <div class="stat"><div class="stat-label">อัตราเก็บได้</div><div class="stat-val" style="color:var(--green)" id="rpt-pct">—</div></div>
     </div>
 
     <!-- Report Filter Tabs -->
@@ -619,48 +552,33 @@ tbody tr:hover{background:var(--accent-l)}
           <button class="btn btn-o btn-sm" id="view-by-one" onclick="switchReportView('one')">👤 เจาะรายลูกค้า</button>
         </div>
         <div style="margin-left:auto;display:none" id="cust-select-wrap">
-          <select class="form-select" id="report-cust-sel" style="font-size:13px"><option>— เลือกลูกค้า —</option><option>SN0005 หจก.A</option><option>SN0006 บจก. การเจริญ</option><option>SN0007 ห้าง 1</option></select>
+          <select class="form-select" id="report-cust-sel" style="font-size:13px"><option>— เลือกลูกค้า —</option></select>
         </div>
       </div>
     </div></div>
 
     <!-- View: By Customer -->
     <div class="card" id="report-by-cust">
-      <div class="card-head"><div class="card-t">สรุปตามลูกค้า — ม.ค. 2569</div></div>
+      <div class="card-head"><div class="card-t">สรุปตามลูกค้า</div></div>
       <div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r">ภธ 40</th><th class="text-r">อื่นๆ</th><th class="text-r" style="font-weight:700">รวม</th><th class="text-r" style="color:var(--green)">ชำระ</th><th class="text-r" style="color:var(--red)">ค้าง</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <tr><td><strong>หจก.A</strong></td><td class="text-r mono">3,000</td><td class="text-r mono">1,200</td><td class="text-r mono">600</td><td class="text-r mono">—</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">4,800</td><td class="text-r mono" style="color:var(--green)">4,800</td><td class="text-r mono">0</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-        <tr><td><strong>บจก. การเจริญ</strong></td><td class="text-r mono">5,000</td><td class="text-r mono">2,000</td><td class="text-r mono">800</td><td class="text-r mono">700</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">8,500</td><td class="text-r mono" style="color:var(--green)">8,500</td><td class="text-r mono">0</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-        <tr><td><strong>ห้าง 1</strong></td><td class="text-r mono">2,000</td><td class="text-r mono">800</td><td class="text-r mono">730</td><td class="text-r mono">—</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">3,530</td><td class="text-r mono" style="color:var(--orange)">0</td><td class="text-r mono" style="color:var(--red)">3,530</td><td><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></td></tr>
-        <tr><td><strong>ห้าง 2</strong></td><td class="text-r mono">3,500</td><td class="text-r mono">1,500</td><td class="text-r mono">700</td><td class="text-r mono">500</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">6,200</td><td class="text-r mono">0</td><td class="text-r mono" style="color:var(--red)">6,200</td><td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td></tr>
-      </tbody>
-      <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td>รวม</td><td class="text-r mono">13,500</td><td class="text-r mono">5,500</td><td class="text-r mono">2,830</td><td class="text-r mono">1,200</td><td class="text-r mono">—</td><td class="text-r mono" style="color:var(--accent)">23,030</td><td class="text-r mono" style="color:var(--green)">13,300</td><td class="text-r mono" style="color:var(--red)">9,730</td><td></td></tr></tfoot></table></div>
+      <tbody id="rpt-cust-tb"><tr><td colspan="10" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr></tbody>
+      <tfoot id="rpt-cust-foot"></tfoot></table></div>
     </div>
 
     <!-- View: By Tax Type -->
     <div class="card" id="report-by-tax" style="display:none">
-      <div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี — ม.ค. 2569</div></div>
+      <div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี</div></div>
       <div class="tbl-w"><table><thead><tr><th>ประเภทค่าภาษี/บริการ</th><th>ประเภท</th><th class="text-r">จำนวนลูกค้า</th><th class="text-r">ยอดรวม</th><th class="text-r" style="color:var(--green)">ชำระแล้ว</th><th class="text-r" style="color:var(--red)">ค้างชำระ</th><th class="text-r">อัตราเก็บ</th></tr></thead>
-      <tbody>
-        <tr><td><strong>ค่าทำบัญชี</strong></td><td>รายเดือน</td><td class="text-r">8</td><td class="text-r mono" style="font-weight:700">฿28,000</td><td class="text-r mono" style="color:var(--green)">฿16,000</td><td class="text-r mono" style="color:var(--red)">฿12,000</td><td class="text-r">57.1%</td></tr>
-        <tr><td><strong>ภพ 30</strong></td><td>รายเดือน</td><td class="text-r">6</td><td class="text-r mono" style="font-weight:700">฿12,500</td><td class="text-r mono" style="color:var(--green)">฿8,200</td><td class="text-r mono" style="color:var(--red)">฿4,300</td><td class="text-r">65.6%</td></tr>
-        <tr><td><strong>ภงด 3,53</strong></td><td>รายเดือน</td><td class="text-r">7</td><td class="text-r mono" style="font-weight:700">฿8,800</td><td class="text-r mono" style="color:var(--green)">฿5,900</td><td class="text-r mono" style="color:var(--red)">฿2,900</td><td class="text-r">67.0%</td></tr>
-        <tr><td><strong>ภธ 40</strong></td><td>รายเดือน</td><td class="text-r">4</td><td class="text-r mono" style="font-weight:700">฿5,200</td><td class="text-r mono" style="color:var(--green)">฿3,200</td><td class="text-r mono" style="color:var(--red)">฿2,000</td><td class="text-r">61.5%</td></tr>
-        <tr><td><strong>ค่าสอบ บช</strong></td><td>รายปี</td><td class="text-r">2</td><td class="text-r mono" style="font-weight:700">฿14,000</td><td class="text-r mono" style="color:var(--green)">฿9,000</td><td class="text-r mono" style="color:var(--red)">฿5,000</td><td class="text-r">64.3%</td></tr>
-      </tbody>
-      <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td>รวมทั้งหมด</td><td></td><td class="text-r">—</td><td class="text-r mono" style="color:var(--accent)">฿68,500</td><td class="text-r mono" style="color:var(--green)">฿42,300</td><td class="text-r mono" style="color:var(--red)">฿26,200</td><td class="text-r">61.8%</td></tr></tfoot></table></div>
+      <tbody id="rpt-tax-tb"><tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr></tbody>
+      <tfoot id="rpt-tax-foot"></tfoot></table></div>
     </div>
 
     <!-- View: By Single Customer -->
     <div class="card" id="report-by-one" style="display:none">
-      <div class="card-head"><div class="card-t">📊 รายละเอียด — หจก.A (SN0005)</div></div>
+      <div class="card-head"><div class="card-t" id="rpt-one-title">📊 เลือกลูกค้าจากเมนูด้านบน</div></div>
       <div class="tbl-w"><table><thead><tr><th>เดือน</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r">อื่นๆ</th><th class="text-r" style="font-weight:700">รวม</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <tr><td>ม.ค. 69</td><td class="text-r mono">3,000</td><td class="text-r mono">1,200</td><td class="text-r mono">600</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">4,800</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-        <tr><td>ธ.ค. 68</td><td class="text-r mono">3,000</td><td class="text-r mono">800</td><td class="text-r mono">500</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">4,300</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-        <tr><td>พ.ย. 68</td><td class="text-r mono">3,000</td><td class="text-r mono">750</td><td class="text-r mono">500</td><td class="text-r mono">—</td><td class="text-r mono" style="font-weight:700">4,250</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-      </tbody>
-      <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td>รวม 3 เดือน</td><td class="text-r mono">9,000</td><td class="text-r mono">2,750</td><td class="text-r mono">1,600</td><td class="text-r mono">—</td><td class="text-r mono" style="color:var(--accent)">13,350</td><td></td></tr></tfoot></table></div>
+      <tbody id="rpt-one-tb"><tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">เลือกลูกค้าเพื่อดูรายละเอียด</td></tr></tbody>
+      <tfoot id="rpt-one-foot"></tfoot></table></div>
     </div>
   </div>
 </div>
@@ -719,48 +637,7 @@ tbody tr:hover{background:var(--accent-l)}
           <div class="tbl-w">
             <table id="inv-cust-table">
               <thead><tr><th style="width:40px"></th><th>รหัส</th><th>ชื่อลูกค้า</th><th class="text-r">ยอดค้างชำระ</th><th>เดือนค้าง</th><th>สถานะ</th></tr></thead>
-              <tbody>
-                <tr class="inv-cust-row" onclick="selectInvCust('SN0005','หจก.A')" style="cursor:pointer">
-                  <td style="text-align:center;font-size:18px">👆</td>
-                  <td class="mono">SN0005</td>
-                  <td><strong>หจก.A</strong></td>
-                  <td class="text-r mono" style="color:var(--red);font-weight:600">฿15,900</td>
-                  <td><span class="badge b-red">3 เดือน</span></td>
-                  <td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td>
-                </tr>
-                <tr class="inv-cust-row" onclick="selectInvCust('SN0007','ห้าง 1')" style="cursor:pointer">
-                  <td style="text-align:center;font-size:18px">👆</td>
-                  <td class="mono">SN0007</td>
-                  <td><strong>ห้าง 1</strong></td>
-                  <td class="text-r mono" style="color:var(--orange);font-weight:600">฿3,530</td>
-                  <td><span class="badge b-orange">1 เดือน</span></td>
-                  <td><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></td>
-                </tr>
-                <tr class="inv-cust-row" onclick="selectInvCust('SN0008','ห้าง 2')" style="cursor:pointer">
-                  <td style="text-align:center;font-size:18px">👆</td>
-                  <td class="mono">SN0008</td>
-                  <td><strong>ห้าง 2</strong></td>
-                  <td class="text-r mono" style="color:var(--red);font-weight:600">฿18,600</td>
-                  <td><span class="badge b-red">3 เดือน</span></td>
-                  <td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td>
-                </tr>
-                <tr class="inv-cust-row" onclick="selectInvCust('MN0106','ห้าง 4')" style="cursor:pointer">
-                  <td style="text-align:center;font-size:18px">👆</td>
-                  <td class="mono">MN0106</td>
-                  <td><strong>ห้าง 4</strong></td>
-                  <td class="text-r mono" style="color:var(--red);font-weight:600">฿23,400</td>
-                  <td><span class="badge b-red">3 เดือน</span></td>
-                  <td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td>
-                </tr>
-                <tr class="inv-cust-row" onclick="selectInvCust('MV58792','ห้าง 8')" style="cursor:pointer">
-                  <td style="text-align:center;font-size:18px">👆</td>
-                  <td class="mono">MV58792</td>
-                  <td><strong>ห้าง 8</strong></td>
-                  <td class="text-r mono" style="color:var(--red);font-weight:600">฿16,500</td>
-                  <td><span class="badge b-red">2 เดือน</span></td>
-                  <td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td>
-                </tr>
-              </tbody>
+              <tbody id="inv-cust-tbody"><tr><td colspan="6" style="text-align:center;color:var(--text-m);padding:24px">กำลังโหลดข้อมูลลูกค้า...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -774,7 +651,7 @@ tbody tr:hover{background:var(--accent-l)}
         <div class="flex items-c gap-12">
           <span style="font-size:24px">👤</span>
           <div>
-            <div style="font-weight:700;font-size:17px" id="inv-sel-name">SN0008 — ห้าง 2</div>
+            <div style="font-weight:700;font-size:17px" id="inv-sel-name">—</div>
             <div style="font-size:13px;color:var(--text-s)" id="inv-sel-info">รายการค้างชำระทั้งหมด</div>
           </div>
         </div>
@@ -786,26 +663,10 @@ tbody tr:hover{background:var(--accent-l)}
         <div class="tbl-w">
           <table>
             <thead><tr><th>#</th><th>เดือน/ปี</th><th>รายการ</th><th class="text-r">จำนวนเงิน</th></tr></thead>
-            <tbody>
-              <tr style="background:var(--surface-alt)"><td colspan="4" style="font-weight:700;font-size:13px;color:var(--text-s);padding:8px 14px">📅 พฤศจิกายน 2568 <span class="badge b-red" style="font-size:10px;margin-left:8px"><span class="dot"></span>ค้าง 3 เดือน</span></td></tr>
-              <tr><td>1</td><td class="mono">พ.ย. 68</td><td>ค่าทำบัญชี</td><td class="text-r mono" style="font-weight:600">3,500.00</td></tr>
-              <tr><td>2</td><td class="mono">พ.ย. 68</td><td>ภพ 30</td><td class="text-r mono" style="font-weight:600">1,500.00</td></tr>
-              <tr><td>3</td><td class="mono">พ.ย. 68</td><td>ภงด 3,53</td><td class="text-r mono" style="font-weight:600">700.00</td></tr>
-              <tr><td>4</td><td class="mono">พ.ย. 68</td><td>ภธ 40</td><td class="text-r mono" style="font-weight:600">500.00</td></tr>
-
-              <tr style="background:var(--surface-alt)"><td colspan="4" style="font-weight:700;font-size:13px;color:var(--text-s);padding:8px 14px">📅 ธันวาคม 2568 <span class="badge b-red" style="font-size:10px;margin-left:8px"><span class="dot"></span>ค้าง 2 เดือน</span></td></tr>
-              <tr><td>5</td><td class="mono">ธ.ค. 68</td><td>ค่าทำบัญชี</td><td class="text-r mono" style="font-weight:600">3,500.00</td></tr>
-              <tr><td>6</td><td class="mono">ธ.ค. 68</td><td>ภพ 30</td><td class="text-r mono" style="font-weight:600">1,500.00</td></tr>
-              <tr><td>7</td><td class="mono">ธ.ค. 68</td><td>ภงด 3,53</td><td class="text-r mono" style="font-weight:600">700.00</td></tr>
-              <tr><td>8</td><td class="mono">ธ.ค. 68</td><td>ภธ 40</td><td class="text-r mono" style="font-weight:600">500.00</td></tr>
-
-              <tr style="background:var(--surface-alt)"><td colspan="4" style="font-weight:700;font-size:13px;color:var(--text-s);padding:8px 14px">📅 มกราคม 2569 <span class="badge b-orange" style="font-size:10px;margin-left:8px"><span class="dot"></span>เดือนปัจจุบัน</span></td></tr>
-              <tr><td>9</td><td class="mono">ม.ค. 69</td><td>ค่าทำบัญชี</td><td class="text-r mono" style="font-weight:600">3,500.00</td></tr>
-              <tr><td>10</td><td class="mono">ม.ค. 69</td><td>ภพ 30</td><td class="text-r mono" style="font-weight:600">1,500.00</td></tr>
-              <tr><td>11</td><td class="mono">ม.ค. 69</td><td>ภงด 3,53</td><td class="text-r mono" style="font-weight:600">700.00</td></tr>
-              <tr><td>12</td><td class="mono">ม.ค. 69</td><td>ภธ 40</td><td class="text-r mono" style="font-weight:600">500.00</td></tr>
+            <tbody id="inv-detail-tbody">
+              <tr><td colspan="4" style="text-align:center;color:var(--text-m);padding:24px">เลือกลูกค้าเพื่อดูรายการค้างชำระ</td></tr>
             </tbody>
-            <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td colspan="3" style="font-size:15px;padding:14px">ยอดรวมทั้งสิ้น (12 รายการ · 3 เดือน)</td><td class="text-r mono" style="font-size:20px;color:var(--accent)">฿18,600.00</td></tr></tfoot>
+            <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td colspan="3" style="font-size:15px;padding:14px">ยอดรวมทั้งสิ้น</td><td class="text-r mono" style="font-size:20px;color:var(--accent)" id="inv-list-total">—</td></tr></tfoot>
           </table>
         </div>
       </div>
@@ -829,11 +690,11 @@ tbody tr:hover{background:var(--accent-l)}
 
       <div class="inv-preview" id="inv-print-area">
         <div class="inv-head">
-          <div><div class="inv-title">ใบแจ้งหนี้</div><div class="inv-no" id="inv-print-no">INV-2569-0025</div><div style="font-size:12px;margin-top:4px;color:var(--text-s)">นำทรัพย์การบัญชี</div></div>
-          <div style="text-align:right"><div class="inv-ml">วันที่ออก</div><div style="font-weight:600">7 ก.พ. 2569</div><div class="inv-ml" style="margin-top:6px">กำหนดชำระ</div><div style="font-weight:600">7 ก.พ. 2569</div></div>
+          <div><div class="inv-title">ใบแจ้งหนี้</div><div class="inv-no" id="inv-print-no">—</div><div style="font-size:12px;margin-top:4px;color:var(--text-s)">นำทรัพย์การบัญชี</div></div>
+          <div style="text-align:right"><div class="inv-ml">วันที่ออก</div><div style="font-weight:600" id="inv-print-date">—</div><div class="inv-ml" style="margin-top:6px">กำหนดชำระ</div><div style="font-weight:600" id="inv-print-due">—</div></div>
         </div>
         <div class="inv-grid">
-          <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px" id="inv-print-cust">ห้าง 2</div><div style="font-size:12px;color:var(--text-s)" id="inv-print-code">รหัส: SN0008</div></div>
+          <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px" id="inv-print-cust">—</div><div style="font-size:12px;color:var(--text-s)" id="inv-print-code">—</div></div>
           <div><div class="inv-ml">ออกโดย</div><div style="font-weight:600;font-size:15px">นำทรัพย์การบัญชี</div></div>
         </div>
 
@@ -844,7 +705,7 @@ tbody tr:hover{background:var(--accent-l)}
             <!-- filled by JS -->
           </tbody>
         </table>
-        <div style="display:flex;justify-content:flex-end"><div class="inv-total-box"><div style="font-size:11px;opacity:.7">ยอดรวมทั้งสิ้น</div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700" id="inv-print-total">฿18,600.00</div><div style="font-size:11px;opacity:.7;margin-top:2px" id="inv-print-total-text">(หนึ่งหมื่นแปดพันหกร้อยบาทถ้วน)</div></div></div>
+        <div style="display:flex;justify-content:flex-end"><div class="inv-total-box"><div style="font-size:11px;opacity:.7">ยอดรวมทั้งสิ้น</div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700" id="inv-print-total">—</div><div style="font-size:11px;opacity:.7;margin-top:2px" id="inv-print-total-text">—</div></div></div>
 
         <!-- QR + Signature Footer -->
         <div class="inv-footer">
@@ -894,7 +755,7 @@ tbody tr:hover{background:var(--accent-l)}
 
     <!-- Customer banner -->
     <div class="hb hb-green mb-24 flex items-c jc-b">
-      <div class="flex items-c gap-12"><span style="font-size:20px">📄</span><div><div style="font-weight:700">INV-2569-0025 — ห้าง 2 (SN0008)</div><div style="font-size:12px;color:var(--text-s)">ยอดค้างทั้งหมด ฿18,600 · 12 รายการ · 3 เดือน</div></div></div>
+      <div class="flex items-c gap-12"><span style="font-size:20px">📄</span><div><div style="font-weight:700" id="collect-header">—</div><div style="font-size:12px;color:var(--text-s)" id="collect-sub">เลือกลูกค้าจากใบแจ้งหนี้</div></div></div>
       <button class="btn btn-o btn-sm" onclick="goPage('staff-inv')">← เปลี่ยนลูกค้า</button>
     </div>
 
@@ -913,74 +774,7 @@ tbody tr:hover{background:var(--accent-l)}
           </div>
           <div class="card-body" style="padding:0">
 
-            <!-- พ.ย. 68 -->
-            <div style="padding:10px 20px;background:var(--surface-alt);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-s)">📅 พ.ย. 2568</div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="3500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ค่าทำบัญชี</div><div class="pay-item-month">พ.ย. 68</div></div>
-              <div class="pay-item-amt mono">฿3,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="1500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภพ 30</div><div class="pay-item-month">พ.ย. 68</div></div>
-              <div class="pay-item-amt mono">฿1,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="700">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภงด 3,53</div><div class="pay-item-month">พ.ย. 68</div></div>
-              <div class="pay-item-amt mono">฿700</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภธ 40</div><div class="pay-item-month">พ.ย. 68</div></div>
-              <div class="pay-item-amt mono">฿500</div>
-            </div>
-
-            <!-- ธ.ค. 68 -->
-            <div style="padding:10px 20px;background:var(--surface-alt);border-bottom:1px solid var(--border);border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-s)">📅 ธ.ค. 2568</div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="3500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ค่าทำบัญชี</div><div class="pay-item-month">ธ.ค. 68</div></div>
-              <div class="pay-item-amt mono">฿3,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="1500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภพ 30</div><div class="pay-item-month">ธ.ค. 68</div></div>
-              <div class="pay-item-amt mono">฿1,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="700">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภงด 3,53</div><div class="pay-item-month">ธ.ค. 68</div></div>
-              <div class="pay-item-amt mono">฿700</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภธ 40</div><div class="pay-item-month">ธ.ค. 68</div></div>
-              <div class="pay-item-amt mono">฿500</div>
-            </div>
-
-            <!-- ม.ค. 69 -->
-            <div style="padding:10px 20px;background:var(--surface-alt);border-bottom:1px solid var(--border);border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-s)">📅 ม.ค. 2569</div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="3500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ค่าทำบัญชี</div><div class="pay-item-month">ม.ค. 69</div></div>
-              <div class="pay-item-amt mono">฿3,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="1500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภพ 30</div><div class="pay-item-month">ม.ค. 69</div></div>
-              <div class="pay-item-amt mono">฿1,500</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="700">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภงด 3,53</div><div class="pay-item-month">ม.ค. 69</div></div>
-              <div class="pay-item-amt mono">฿700</div>
-            </div>
-            <div class="pay-item sel" onclick="togglePayItem(this)" data-amt="500">
-              <div class="pay-item-chk"><div class="pi-cb checked">✓</div></div>
-              <div class="pay-item-info"><div class="pay-item-name">ภธ 40</div><div class="pay-item-month">ม.ค. 69</div></div>
-              <div class="pay-item-amt mono">฿500</div>
-            </div>
+            <div id="collect-items-list" style="text-align:center;padding:24px;color:var(--text-m)">เลือกลูกค้าจากใบแจ้งหนี้เพื่อดูรายการชำระ</div>
 
           </div>
         </div>
@@ -1063,9 +857,9 @@ tbody tr:hover{background:var(--accent-l)}
           <div style="background:var(--surface);border:2px solid var(--accent);border-radius:var(--rl);padding:24px;box-shadow:var(--sh-l)">
             <div style="font-weight:700;font-size:16px;margin-bottom:16px">📊 สรุปการรับชำระ</div>
 
-            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดค้างทั้งหมด</span><span class="mono" style="font-weight:600">฿18,600.00</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดค้างทั้งหมด</span><span class="mono" style="font-weight:600" id="collect-total">—</span></div>
             <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">รายการที่เลือกชำระ</span><span style="font-weight:600" id="pay-sel-count">12 รายการ</span></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดตามรายการที่เลือก</span><span class="mono" style="font-weight:600" id="pay-sel-amt">฿18,600.00</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดตามรายการที่เลือก</span><span class="mono" style="font-weight:600" id="pay-sel-amt">—</span></div>
 
             <div style="margin-top:12px;padding:12px;background:var(--surface-alt);border-radius:var(--r);border:1px solid var(--border)">
               <div style="font-size:12px;font-weight:600;color:var(--text-s);margin-bottom:8px">💰 ยอดที่กรอกรับจริง</div>
@@ -1104,19 +898,13 @@ tbody tr:hover{background:var(--accent-l)}
 <div class="page" id="page-staff-submit">
   <div class="top-bar"><div><div class="pg-title">📤 สถานะรออนุมัติ</div><div class="pg-desc">ติดตามรายการที่ส่งให้ผู้จัดการ</div></div><div class="role-tag role-tag-staff">👩‍💼 พนักงาน</div></div>
   <div class="content">
-    <div class="in-tabs mb-24"><button class="in-tab active" onclick="switchInTab(this,'submit-pending')">รออนุมัติ (2)</button><button class="in-tab" onclick="switchInTab(this,'submit-done')">อนุมัติแล้ว (6)</button><button class="in-tab" onclick="switchInTab(this,'submit-return')">ส่งกลับแก้ไข (0)</button></div>
+    <div class="in-tabs mb-24"><button class="in-tab active" onclick="switchInTab(this,'submit-pending')">รออนุมัติ</button><button class="in-tab" onclick="switchInTab(this,'submit-done')">อนุมัติแล้ว</button><button class="in-tab" onclick="switchInTab(this,'submit-return')">ส่งกลับแก้ไข</button></div>
     <div id="submit-pending">
-    <div class="approval-card pending"><div class="flex items-c jc-b"><div><div style="font-weight:700">หจก.A · INV-2569-0023</div><div style="font-size:12px;color:var(--text-s)">โอน KBank · 6 ก.พ. 69</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿10,800</div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div></div></div>
-    <div class="approval-card pending"><div class="flex items-c jc-b"><div><div style="font-weight:700">ห้าง 1 · INV-2569-0021</div><div style="font-size:12px;color:var(--text-s)">เงินสด · 5 ก.พ. 69</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿3,530</div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div></div></div>
+    <div id="staff-submit-pending" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีรายการรออนุมัติ</div>
     </div>
 
     <div id="submit-done" style="display:none">
-    <div class="approval-card approved"><div class="flex items-c jc-b"><div><div style="font-weight:700">บจก. การเจริญ · INV-2569-0020</div><div style="font-size:12px;color:var(--text-s)">โอน SCB · 3 ก.พ. 69 · ✅ อนุมัติ 3 ก.พ.</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿8,500</div><span class="badge b-green"><span class="dot"></span>อนุมัติแล้ว</span></div></div>
-      <div class="flex gap-8 mt-12"><button class="btn btn-o btn-sm" onclick="goPage('staff-receipt')">🧾 ดูใบเสร็จ</button><button class="btn btn-ghost btn-sm">🖨️ พิมพ์ใบเสร็จ</button></div>
-    </div>
-    <div class="approval-card approved"><div class="flex items-c jc-b"><div><div style="font-weight:700">ห้าง 3 · INV-2569-0019</div><div style="font-size:12px;color:var(--text-s)">เช็ค BBL · 1 ก.พ. 69 · ✅ อนุมัติ 1 ก.พ.</div></div><div class="text-r"><div class="mono" style="font-size:18px;font-weight:700">฿4,500</div><span class="badge b-green"><span class="dot"></span>อนุมัติแล้ว</span></div></div>
-      <div class="flex gap-8 mt-12"><button class="btn btn-o btn-sm" onclick="goPage('staff-receipt')">🧾 ดูใบเสร็จ</button><button class="btn btn-ghost btn-sm">🖨️ พิมพ์ใบเสร็จ</button></div>
-    </div>
+    <div id="staff-submit-done" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีรายการที่อนุมัติ</div>
     </div>
 
     <div id="submit-return" style="display:none">
@@ -1134,29 +922,26 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="content">
     <div class="receipt-preview">
       <div class="inv-head">
-        <div><div class="inv-title">ใบเสร็จรับเงิน</div><div class="inv-no">REC-2569-0020</div><div style="font-size:12px;margin-top:4px;color:var(--text-s)">นำทรัพย์การบัญชี</div></div>
-        <div style="text-align:right"><div class="receipt-stamp">✅ ชำระแล้ว</div><div style="margin-top:8px"><div class="inv-ml">วันที่ออก</div><div style="font-weight:600">3 ก.พ. 2569</div></div></div>
+        <div><div class="inv-title">ใบเสร็จรับเงิน</div><div class="inv-no" id="rec-no">—</div><div style="font-size:12px;margin-top:4px;color:var(--text-s)">นำทรัพย์การบัญชี</div></div>
+        <div style="text-align:right"><div class="receipt-stamp">✅ ชำระแล้ว</div><div style="margin-top:8px"><div class="inv-ml">วันที่ออก</div><div style="font-weight:600" id="rec-issue-date">—</div></div></div>
       </div>
       <div class="inv-grid">
-        <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px">บจก. การเจริญ</div><div style="font-size:12px;color:var(--text-s)">รหัส: SN0006</div></div>
-        <div><div class="inv-ml">อ้างอิงใบแจ้งหนี้</div><div style="font-weight:600;font-size:15px">INV-2569-0020</div></div>
+        <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px" id="rec-cust">—</div><div style="font-size:12px;color:var(--text-s)" id="rec-code">—</div></div>
+        <div><div class="inv-ml">อ้างอิงใบแจ้งหนี้</div><div style="font-weight:600;font-size:15px" id="rec-inv">—</div></div>
       </div>
       <table class="inv-table"><thead><tr><th style="text-align:left">#</th><th style="text-align:left">รายการ</th><th style="text-align:left">เดือน</th><th style="text-align:right">จำนวนเงิน</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>ค่าทำบัญชี</td><td>ม.ค. 69</td><td class="text-r mono">5,000.00</td></tr>
-        <tr><td>2</td><td>ภพ 30</td><td>ม.ค. 69</td><td class="text-r mono">2,000.00</td></tr>
-        <tr><td>3</td><td>ภงด 3,53</td><td>ม.ค. 69</td><td class="text-r mono">800.00</td></tr>
-        <tr><td>4</td><td>ภธ 40</td><td>ม.ค. 69</td><td class="text-r mono">700.00</td></tr>
+      <tbody id="rec-items-tbody">
+        <tr><td colspan="4" style="text-align:center;color:var(--text-m);padding:24px">ยังไม่มีข้อมูลใบเสร็จ</td></tr>
       </tbody></table>
-      <div style="display:flex;justify-content:flex-end"><div class="inv-total-box"><div style="font-size:11px;opacity:.7">ยอดรับชำระทั้งสิ้น</div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700">฿8,500.00</div><div style="font-size:11px;opacity:.7;margin-top:2px">(แปดพันห้าร้อยบาทถ้วน)</div></div></div>
+      <div style="display:flex;justify-content:flex-end"><div class="inv-total-box"><div style="font-size:11px;opacity:.7">ยอดรับชำระทั้งสิ้น</div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700" id="rec-total">—</div><div style="font-size:11px;opacity:.7;margin-top:2px" id="rec-total-text">—</div></div></div>
 
       <!-- Payment details -->
       <div style="margin-top:24px;padding:16px 20px;background:var(--green-l);border-radius:var(--r);border:1px solid rgba(74,122,82,.2)">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--green);margin-bottom:8px">💳 รายละเอียดการชำระ</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px">
-          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:2px">🏦 เงินโอน</div></div>
-          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ธนาคาร</div><div style="font-weight:600;margin-top:2px">ไทยพาณิชย์ (SCB)</div></div>
-          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">วันที่รับ</div><div style="font-weight:600;margin-top:2px">3 ก.พ. 2569</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px" id="rec-pay-detail">
+          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:2px" id="rec-channel">—</div></div>
+          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ธนาคาร</div><div style="font-weight:600;margin-top:2px" id="rec-bank">—</div></div>
+          <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">วันที่รับ</div><div style="font-weight:600;margin-top:2px" id="rec-date">—</div></div>
         </div>
       </div>
 
@@ -1171,28 +956,24 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ STAFF: REPORT ============ -->
 <div class="page" id="page-staff-report">
-  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">ดูรายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select"><option>ม.ค. 2569</option></select></div></div>
+  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">ดูรายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select" id="stf-report-month"><option>กำลังโหลด...</option></select></div></div>
   <div class="content">
     <div class="stats mb-24">
-      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)">฿68,500</div></div>
-      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)">฿42,300</div></div>
-      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)">฿26,200</div></div>
-      <div class="stat"><div class="stat-label">อัตราเก็บ</div><div class="stat-val" style="color:var(--green)">61.8%</div></div>
+      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)" id="stf-rpt-billed">—</div></div>
+      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)" id="stf-rpt-paid">—</div></div>
+      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)" id="stf-rpt-unpaid">—</div></div>
+      <div class="stat"><div class="stat-label">อัตราเก็บ</div><div class="stat-val" style="color:var(--green)" id="stf-rpt-pct">—</div></div>
     </div>
     <div class="card"><div class="card-body" style="padding:16px 24px"><div class="flex items-c gap-16"><div style="font-size:13px;font-weight:600;color:var(--text-s)">มุมมอง:</div><button class="btn btn-p btn-sm" id="sv-by-cust" onclick="switchStaffReportView('cust')">📊 รายลูกค้า</button><button class="btn btn-o btn-sm" id="sv-by-tax" onclick="switchStaffReportView('tax')">📑 รายค่าภาษี</button></div></div></div>
-    <div class="card mt-16" id="staff-report-cust"><div class="card-head"><div class="card-t">สรุปตามลูกค้า — ม.ค. 2569</div></div><div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r" style="font-weight:700">รวม</th><th class="text-r" style="color:var(--green)">ชำระ</th><th class="text-r" style="color:var(--red)">ค้าง</th><th>สถานะ</th></tr></thead>
+    <div class="card mt-16" id="staff-report-cust"><div class="card-head"><div class="card-t">สรุปตามลูกค้า</div></div><div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r" style="font-weight:700">รวม</th><th class="text-r" style="color:var(--green)">ชำระ</th><th class="text-r" style="color:var(--red)">ค้าง</th><th>สถานะ</th></tr></thead>
     <tbody>
-      <tr><td><strong>หจก.A</strong></td><td class="text-r mono">3,000</td><td class="text-r mono">1,200</td><td class="text-r mono">600</td><td class="text-r mono" style="font-weight:700">4,800</td><td class="text-r mono" style="color:var(--green)">4,800</td><td class="text-r mono">0</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-      <tr><td><strong>บจก. การเจริญ</strong></td><td class="text-r mono">5,000</td><td class="text-r mono">2,000</td><td class="text-r mono">800</td><td class="text-r mono" style="font-weight:700">8,500</td><td class="text-r mono" style="color:var(--green)">8,500</td><td class="text-r mono">0</td><td><span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span></td></tr>
-      <tr><td><strong>ห้าง 2</strong></td><td class="text-r mono">3,500</td><td class="text-r mono">1,500</td><td class="text-r mono">700</td><td class="text-r mono" style="font-weight:700">6,200</td><td class="text-r mono">0</td><td class="text-r mono" style="color:var(--red)">6,200</td><td><span class="badge b-red"><span class="dot"></span>ค้างชำระ</span></td></tr>
+
     </tbody></table></div></div>
-    <div class="card mt-16" id="staff-report-tax" style="display:none"><div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี — ม.ค. 2569</div></div><div class="tbl-w"><table><thead><tr><th>ประเภท</th><th class="text-r">ยอดรวม</th><th class="text-r" style="color:var(--green)">ชำระแล้ว</th><th class="text-r" style="color:var(--red)">ค้างชำระ</th><th class="text-r">อัตราเก็บ</th></tr></thead>
-    <tbody>
-      <tr><td><strong>ค่าทำบัญชี</strong></td><td class="text-r mono" style="font-weight:700">฿28,000</td><td class="text-r mono" style="color:var(--green)">฿16,000</td><td class="text-r mono" style="color:var(--red)">฿12,000</td><td class="text-r">57.1%</td></tr>
-      <tr><td><strong>ภพ 30</strong></td><td class="text-r mono" style="font-weight:700">฿12,500</td><td class="text-r mono" style="color:var(--green)">฿8,200</td><td class="text-r mono" style="color:var(--red)">฿4,300</td><td class="text-r">65.6%</td></tr>
-      <tr><td><strong>ภงด 3,53</strong></td><td class="text-r mono" style="font-weight:700">฿8,800</td><td class="text-r mono" style="color:var(--green)">฿5,900</td><td class="text-r mono" style="color:var(--red)">฿2,900</td><td class="text-r">67.0%</td></tr>
+    <div class="card mt-16" id="staff-report-tax" style="display:none"><div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี</div></div><div class="tbl-w"><table><thead><tr><th>ประเภท</th><th class="text-r">ยอดรวม</th><th class="text-r" style="color:var(--green)">ชำระแล้ว</th><th class="text-r" style="color:var(--red)">ค้างชำระ</th><th class="text-r">อัตราเก็บ</th></tr></thead>
+    <tbody id="stf-rpt-tax-tb">
+      <tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr>
     </tbody>
-    <tfoot><tr style="background:var(--surface-alt);font-weight:700"><td>รวม</td><td class="text-r mono" style="color:var(--accent)">฿68,500</td><td class="text-r mono" style="color:var(--green)">฿42,300</td><td class="text-r mono" style="color:var(--red)">฿26,200</td><td class="text-r">61.8%</td></tr></tfoot></table></div></div>
+    <tfoot id="stf-rpt-foot"></tfoot></table></div></div>
   </div>
 </div>
 
@@ -1202,9 +983,7 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="content">
     <div class="card"><div class="tbl-w"><table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th>ใบแจ้งหนี้</th><th>ช่องทาง</th><th class="text-r">จำนวนเงิน</th><th>สถานะ</th><th></th></tr></thead>
     <tbody>
-      <tr><td class="mono">6 ก.พ.</td><td><strong>หจก.A</strong></td><td class="mono">INV-2569-0023</td><td>🏦 โอน KBank</td><td class="text-r mono">฿10,800</td><td><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></td><td></td></tr>
-      <tr><td class="mono">3 ก.พ.</td><td><strong>บจก. การเจริญ</strong></td><td class="mono">INV-2569-0020</td><td>🏦 โอน SCB</td><td class="text-r mono">฿8,500</td><td><span class="badge b-green"><span class="dot"></span>อนุมัติ</span></td><td><button class="btn btn-ghost btn-sm" onclick="goPage('staff-receipt')">🧾 ใบเสร็จ</button></td></tr>
-      <tr><td class="mono">1 ก.พ.</td><td><strong>ห้าง 3</strong></td><td class="mono">INV-2569-0019</td><td>📝 เช็ค BBL</td><td class="text-r mono">฿4,500</td><td><span class="badge b-green"><span class="dot"></span>อนุมัติ</span></td><td><button class="btn btn-ghost btn-sm" onclick="goPage('staff-receipt')">🧾 ใบเสร็จ</button></td></tr>
+      <tr id="staff-hist-empty"><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">ยังไม่มีประวัติการเก็บเงิน</td></tr>
     </tbody></table></div></div>
   </div>
 </div>
@@ -1218,7 +997,7 @@ tbody tr:hover{background:var(--accent-l)}
     <div class="modal-head"><div class="modal-title">+ เพิ่มลูกค้าใหม่</div><button class="btn btn-ghost btn-sm" onclick="closeModal('add-cust')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid mb-24">
-        <div class="form-group"><label class="form-label">รหัสลูกค้า</label><input class="form-input mono" placeholder="SN0009" /></div>
+        <div class="form-group"><label class="form-label">รหัสลูกค้า</label><input class="form-input mono" placeholder="เช่น NS0001" /></div>
         <div class="form-group"><label class="form-label">ชื่อกิจการ</label><input class="form-input" placeholder="ชื่อลูกค้า" /></div>
         <div class="form-group full"><label class="form-label">ที่อยู่</label><input class="form-input" placeholder="ที่อยู่ออกใบแจ้งหนี้" /></div>
         <div class="form-group"><label class="form-label">เลขผู้เสียภาษี</label><input class="form-input mono" placeholder="x-xxxx-xxxxx-xx-x" /></div>
@@ -1580,7 +1359,7 @@ function filterInvCust(v){document.querySelectorAll('.inv-cust-row').forEach(r=>
 function selectInvCust(code,name){invCustCode=code;invCustName=name;document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-sel-name').textContent=code+' — '+name;document.getElementById('inv-sel-info').textContent='รายการค้างชำระทั้งหมด';setInvFlow(2)}
 function backToInvSelect(){document.getElementById('inv-step-select').style.display='block';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-cust-search').value='';filterInvCust('');setInvFlow(1)}
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
-function generateInvPreview(){const items=[['ค่าทำบัญชี','พ.ย. 68',3500],['ภพ 30','พ.ย. 68',1500],['ภงด 3,53','พ.ย. 68',700],['ภธ 40','พ.ย. 68',500],['ค่าทำบัญชี','ธ.ค. 68',3500],['ภพ 30','ธ.ค. 68',1500],['ภงด 3,53','ธ.ค. 68',700],['ภธ 40','ธ.ค. 68',500],['ค่าทำบัญชี','ม.ค. 69',3500],['ภพ 30','ม.ค. 69',1500],['ภงด 3,53','ม.ค. 69',700],['ภธ 40','ม.ค. 69',500]];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it[2];const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it[0]+'</td><td>'+it[1]+'</td><td class="text-r mono">'+it[2].toLocaleString()+'.00</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t)+'.00';document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-2569-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
+function generateInvPreview(){const items=[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it[2];const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it[0]+'</td><td>'+it[1]+'</td><td class="text-r mono">'+it[2].toLocaleString()+'.00</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t)+'.00';document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
 
 // ===== STAFF REPORT =====
 function switchStaffReportView(v){document.getElementById('staff-report-cust').style.display=v==='cust'?'block':'none';document.getElementById('staff-report-tax').style.display=v==='tax'?'block':'none';document.getElementById('sv-by-cust').className='btn btn-sm '+(v==='cust'?'btn-p':'btn-o');document.getElementById('sv-by-tax').className='btn btn-sm '+(v==='tax'?'btn-p':'btn-o')}
