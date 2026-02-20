@@ -349,7 +349,7 @@ tbody tr:hover{background:var(--accent-l)}
     <button class="nav-i" onclick="goPage('mgr-cust')"><span class="nav-icon">👥</span>ข้อมูลลูกค้า</button>
     <button class="nav-i" onclick="goPage('mgr-entry')"><span class="nav-icon">✏️</span>บันทึกยอดประจำเดือน</button>
     <div class="nav-sec">ตรวจสอบ</div>
-    <button class="nav-i" onclick="goPage('mgr-approve')"><span class="nav-icon">✅</span>อนุมัติการส่งเงิน<span class="nav-badge">3</span></button>
+    <button class="nav-i" onclick="goPage('mgr-approve')"><span class="nav-icon">✅</span>อนุมัติการส่งเงิน<span class="nav-badge" id="nav-approve-count" style="display:none">0</span></button>
     <div class="nav-sec">รายงาน</div>
     <button class="nav-i" onclick="goPage('mgr-report')"><span class="nav-icon">📋</span>รายงานสรุป</button>
   </div>
@@ -362,13 +362,14 @@ tbody tr:hover{background:var(--accent-l)}
     <div class="nav-sec">งานเรียกเก็บ</div>
     <button class="nav-i" onclick="goPage('staff-inv')"><span class="nav-icon">📄</span>ใบแจ้งหนี้</button>
     <button class="nav-i" onclick="goPage('staff-collect')"><span class="nav-icon">💰</span>บันทึกรับชำระ</button>
-    <button class="nav-i" onclick="goPage('staff-submit')"><span class="nav-icon">📤</span>ส่งเงิน/รออนุมัติ<span class="nav-badge nav-badge-o">2</span></button>
+    <button class="nav-i" onclick="goPage('staff-submit')"><span class="nav-icon">📤</span>ส่งเงิน/รออนุมัติ<span class="nav-badge nav-badge-o" id="nav-submit-count" style="display:none">0</span></button>
     <div class="nav-sec">รายงาน</div>
     <button class="nav-i" onclick="goPage('staff-report')"><span class="nav-icon">📋</span>รายงานสรุป</button>
     <button class="nav-i" onclick="goPage('staff-history')"><span class="nav-icon">🕐</span>ประวัติการเก็บเงิน</button>
   </div>
 
   <div class="sb-foot">
+    <button class="sb-logout" id="btn-refresh" onclick="refreshData()" style="margin-bottom:8px;border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.8)">🔄 รีเฟรช</button>
     <button class="sb-logout" onclick="logout()">🚪 ออกจากระบบ</button>
   </div>
 </div>
@@ -1106,6 +1107,53 @@ function showPinError() {
 renderDots();
 
 // ===== ROLE SETUP =====
+// ===== MONTH HELPERS =====
+const THAI_MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const THAI_MONTHS_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function populateEntryMonths() {
+  const sel = document.getElementById('entry-month');
+  if (!sel) return;
+  sel.innerHTML = '';
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const m = d.getMonth();
+    const thaiYear = d.getFullYear() + 543;
+    const shortYear = String(thaiYear).slice(-2);
+    const val = THAI_MONTHS[m] + ' ' + shortYear;
+    const label = THAI_MONTHS_FULL[m] + ' ' + thaiYear;
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = label;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  updateEntryMonthLabels();
+}
+
+function updateEntryMonthLabels() {
+  const sel = document.getElementById('entry-month');
+  if (!sel || !sel.options.length) return;
+  const label = sel.options[sel.selectedIndex].textContent;
+  const $=id=>document.getElementById(id);
+  if($('entry-month-title')) $('entry-month-title').textContent = label;
+  if($('entry-total-label')) $('entry-total-label').textContent = label;
+  if($('sel-cust-sub')) $('sel-cust-sub').textContent = 'กำลังบันทึกยอด: ' + label;
+}
+
+function onEntryMonthChange() { updateEntryMonthLabels(); resetEntryArea(); }
+
+// ===== REFRESH =====
+async function refreshData() {
+  const btn = document.getElementById('btn-refresh');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ โหลด...'; }
+  try {
+    await loadCustomers();
+    await loadDashboard(loginRole);
+  } catch(e) { console.error('Refresh error:', e); }
+  if (btn) { btn.disabled = false; btn.textContent = '🔄 รีเฟรช'; }
+}
+
 async function setupRole(role) {
   const badge = document.getElementById('sb-role-badge');
   const name = currentUser ? currentUser.name : (role==='mgr'?'ผู้จัดการ':'พนักงาน');
@@ -1122,6 +1170,7 @@ async function setupRole(role) {
     if(sn) sn.textContent='👩‍💼 พนักงาน: '+name;
     goPage('staff-dash');
   }
+  populateEntryMonths();
   loadCustomers();
   loadDashboard(role);
 }
@@ -1343,8 +1392,6 @@ async function saveEntry(){
     else alert('❌ '+(r?.error||'ไม่สามารถบันทึกได้'));
   } else { alert('✅ บันทึกสำเร็จ! (Demo)');resetEntryArea(); }
 }
-
-function onEntryMonthChange(){resetEntryArea()}
 
 // ===== REPORT =====
 function switchReportView(v){
