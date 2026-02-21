@@ -243,6 +243,9 @@ tbody tr:hover{background:var(--accent-l)}
 .pay-item{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:all .15s;gap:12px}
 .pay-item:hover{background:var(--accent-l)}
 .pay-item.sel{background:var(--green-l)}
+.pay-item.sel .pay-check{background:var(--green);border-color:var(--green);color:white}
+.pay-item.sel .pay-check::after{content:'✓'}
+.pay-item:not(.sel) .pay-check::after{content:''}
 .pay-item:not(.sel){opacity:.45}
 .pay-item:not(.sel) .pay-item-amt{text-decoration:line-through;color:var(--text-m) !important}
 .pay-item-chk{flex-shrink:0}
@@ -361,7 +364,7 @@ tbody tr:hover{background:var(--accent-l)}
     <button class="nav-i" onclick="goPage('staff-cust')"><span class="nav-icon">👥</span>ข้อมูลลูกค้า</button>
     <div class="nav-sec">งานเรียกเก็บ</div>
     <button class="nav-i" onclick="goPage('staff-inv')"><span class="nav-icon">📄</span>ใบแจ้งหนี้</button>
-    <button class="nav-i" onclick="goPage('staff-collect')"><span class="nav-icon">💰</span>บันทึกรับชำระ</button>
+    <button class="nav-i" onclick="goToCollect()"><span class="nav-icon">💰</span>บันทึกรับชำระ</button>
     <button class="nav-i" onclick="goPage('staff-submit')"><span class="nav-icon">📤</span>ส่งเงิน/รออนุมัติ<span class="nav-badge nav-badge-o" id="nav-submit-count" style="display:none">0</span></button>
     <div class="nav-sec">รายงาน</div>
     <button class="nav-i" onclick="goPage('staff-report')"><span class="nav-icon">📋</span>รายงานสรุป</button>
@@ -479,18 +482,18 @@ tbody tr:hover{background:var(--accent-l)}
       <div class="card"><div class="card-head"><div class="card-t" style="font-size:18px">📝 ใส่ยอด — <span id="entry-month-title">—</span></div><div id="entry-svc-actions"><button class="btn btn-sm btn-o" onclick="clearAllSvc()">🗑️ ล้างทั้งหมด</button></div></div><div class="card-body">
         <div style="font-size:15px;font-weight:700;color:var(--text-s);margin-bottom:16px">📅 บริการรายเดือน</div>
 
-        <div class="svc-row-lg" data-svc="accounting"><div class="svc-name-lg">ค่าทำบัญชี</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="vat"><div class="svc-name-lg">ภพ 30</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="wht"><div class="svc-name-lg">ภงด 3,53</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="sbt"><div class="svc-name-lg">ภธ 40</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd90"><div class="svc-name-lg">ภงด 90</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd94"><div class="svc-name-lg">ภงด 94</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="other"><div class="svc-name-lg">อื่นๆ</div><div class="svc-type-tag">รายเดือน</div><input class="form-input" style="flex:1;font-size:16px;padding:10px 14px" placeholder="ระบุรายละเอียด..." /><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="accounting"><div class="svc-name-lg">ค่าทำบัญชี</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="vat"><div class="svc-name-lg">ภพ 30</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="wht"><div class="svc-name-lg">ภงด 3,53</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="sbt"><div class="svc-name-lg">ภธ 40</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd90"><div class="svc-name-lg">ภงด 90</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd94"><div class="svc-name-lg">ภงด 94</div><div class="svc-type-tag">รายเดือน</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="other"><div class="svc-name-lg">อื่นๆ</div><div class="svc-type-tag">รายเดือน</div><input class="form-input" style="flex:1;font-size:16px;padding:10px 14px" placeholder="ระบุรายละเอียด..." /><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
 
         <div style="font-size:15px;font-weight:700;color:var(--text-s);margin:24px 0 16px">📆 บริการรายปี</div>
-        <div class="svc-row-lg" data-svc="audit"><div class="svc-name-lg">ค่าสอบ บช</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd51"><div class="svc-name-lg">ภงด 51</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd50"><div class="svc-name-lg">ภงด 50</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="audit"><div class="svc-name-lg">ค่าสอบ บช</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd51"><div class="svc-name-lg">ภงด 51</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd50"><div class="svc-name-lg">ภงด 50</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
 
         <!-- Total LARGE -->
         <div style="margin-top:24px;padding:24px;background:var(--surface-alt);border-radius:var(--r);border:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">
@@ -534,54 +537,8 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ MGR: REPORT ============ -->
 <div class="page" id="page-mgr-report">
-  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">รายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select" id="mgr-report-month"><option>กำลังโหลด...</option></select><button class="btn btn-o btn-sm">📥 Export</button></div></div>
-  <div class="content" id="report-content-mgr">
-    <div class="stats mb-24" id="mgr-report-stats">
-      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)" id="rpt-billed">—</div></div>
-      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)" id="rpt-paid">—</div></div>
-      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)" id="rpt-unpaid">—</div></div>
-      <div class="stat"><div class="stat-label">อัตราเก็บได้</div><div class="stat-val" style="color:var(--green)" id="rpt-pct">—</div></div>
-    </div>
-
-    <!-- Report Filter Tabs -->
-    <div class="card mb-24"><div class="card-body" style="padding:16px 24px">
-      <div class="flex items-c gap-16">
-        <div style="font-size:13px;font-weight:600;color:var(--text-s)">มุมมอง:</div>
-        <div class="flex gap-8">
-          <button class="btn btn-p btn-sm" id="view-by-cust" onclick="switchReportView('cust')">📊 รายลูกค้า</button>
-          <button class="btn btn-o btn-sm" id="view-by-tax" onclick="switchReportView('tax')">📑 รายค่าภาษี</button>
-          <button class="btn btn-o btn-sm" id="view-by-one" onclick="switchReportView('one')">👤 เจาะรายลูกค้า</button>
-        </div>
-        <div style="margin-left:auto;display:none" id="cust-select-wrap">
-          <select class="form-select" id="report-cust-sel" style="font-size:13px"><option>— เลือกลูกค้า —</option></select>
-        </div>
-      </div>
-    </div></div>
-
-    <!-- View: By Customer -->
-    <div class="card" id="report-by-cust">
-      <div class="card-head"><div class="card-t">สรุปตามลูกค้า</div></div>
-      <div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r">ภธ 40</th><th class="text-r">อื่นๆ</th><th class="text-r" style="font-weight:700">รวม</th><th class="text-r" style="color:var(--green)">ชำระ</th><th class="text-r" style="color:var(--red)">ค้าง</th><th>สถานะ</th></tr></thead>
-      <tbody id="rpt-cust-tb"><tr><td colspan="10" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr></tbody>
-      <tfoot id="rpt-cust-foot"></tfoot></table></div>
-    </div>
-
-    <!-- View: By Tax Type -->
-    <div class="card" id="report-by-tax" style="display:none">
-      <div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี</div></div>
-      <div class="tbl-w"><table><thead><tr><th>ประเภทค่าภาษี/บริการ</th><th>ประเภท</th><th class="text-r">จำนวนลูกค้า</th><th class="text-r">ยอดรวม</th><th class="text-r" style="color:var(--green)">ชำระแล้ว</th><th class="text-r" style="color:var(--red)">ค้างชำระ</th><th class="text-r">อัตราเก็บ</th></tr></thead>
-      <tbody id="rpt-tax-tb"><tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr></tbody>
-      <tfoot id="rpt-tax-foot"></tfoot></table></div>
-    </div>
-
-    <!-- View: By Single Customer -->
-    <div class="card" id="report-by-one" style="display:none">
-      <div class="card-head"><div class="card-t" id="rpt-one-title">📊 เลือกลูกค้าจากเมนูด้านบน</div></div>
-      <div class="tbl-w"><table><thead><tr><th>เดือน</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r">อื่นๆ</th><th class="text-r" style="font-weight:700">รวม</th><th>สถานะ</th></tr></thead>
-      <tbody id="rpt-one-tb"><tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">เลือกลูกค้าเพื่อดูรายละเอียด</td></tr></tbody>
-      <tfoot id="rpt-one-foot"></tfoot></table></div>
-    </div>
-  </div>
+  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">รายงานครบทุกมุมมอง</div></div><div class="flex gap-8"><button class="btn btn-p btn-sm" onclick="exportReportPDF('mgr')">📥 ดาวน์โหลด PDF</button></div></div>
+  <div class="content" id="report-area-mgr"></div>
 </div>
 
 <!-- ============ STAFF: DASHBOARD ============ -->
@@ -675,7 +632,7 @@ tbody tr:hover{background:var(--accent-l)}
       <div style="display:flex;gap:12px;justify-content:flex-end">
         <button class="btn btn-o btn-lg" onclick="backToInvSelect()">← เปลี่ยนลูกค้า</button>
         <button class="btn btn-p btn-lg" onclick="generateInvPreview()">📄 ดูตัวอย่าง / พิมพ์ใบแจ้งหนี้</button>
-        <button class="btn btn-g btn-lg" onclick="goPage('staff-collect')">💰 ไปรับชำระ →</button>
+        <button class="btn btn-g btn-lg" onclick="goToCollect()">💰 ไปรับชำระ →</button>
       </div>
     </div>
 
@@ -685,7 +642,7 @@ tbody tr:hover{background:var(--accent-l)}
         <button class="btn btn-o" onclick="backToInvList()">← กลับเลือกรายการ</button>
         <div class="flex gap-8">
           <button class="btn btn-p btn-lg" onclick="window.print()">🖨️ พิมพ์ใบแจ้งหนี้</button>
-          <button class="btn btn-g" onclick="goPage('staff-collect')">💰 ไปรับชำระ →</button>
+          <button class="btn btn-g" onclick="goToCollect()">💰 ไปรับชำระ →</button>
         </div>
       </div>
 
@@ -741,7 +698,7 @@ tbody tr:hover{background:var(--accent-l)}
       <div class="flex mt-24" style="justify-content:center;gap:12px">
         <button class="btn btn-o btn-lg" onclick="backToInvList()">← กลับเลือกรายการ</button>
         <button class="btn btn-p btn-lg" onclick="window.print()">🖨️ พิมพ์ใบแจ้งหนี้</button>
-        <button class="btn btn-g btn-lg" onclick="goPage('staff-collect')">💰 ไปรับชำระ →</button>
+        <button class="btn btn-g btn-lg" onclick="goToCollect()">💰 ไปรับชำระ →</button>
       </div>
     </div>
 
@@ -804,7 +761,7 @@ tbody tr:hover{background:var(--accent-l)}
               </div>
               <div class="form-group mb-12">
                 <label class="form-label">💰 จำนวนเงินที่ชำระ</label>
-                <input class="form-input mono pay-amt-input" placeholder="0.00" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-1-amt" />
+                <input class="form-input mono pay-amt-input" placeholder="0.00" inputmode="decimal" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-1-amt" />
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
                 <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
@@ -832,7 +789,7 @@ tbody tr:hover{background:var(--accent-l)}
               </div>
               <div class="form-group mb-12">
                 <label class="form-label">💰 จำนวนเงินที่ชำระ</label>
-                <input class="form-input mono pay-amt-input" placeholder="0.00" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-{N}-amt" />
+                <input class="form-input mono pay-amt-input" placeholder="0.00" inputmode="decimal" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-{N}-amt" />
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
                 <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
@@ -859,7 +816,7 @@ tbody tr:hover{background:var(--accent-l)}
             <div style="font-weight:700;font-size:16px;margin-bottom:16px">📊 สรุปการรับชำระ</div>
 
             <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดค้างทั้งหมด</span><span class="mono" style="font-weight:600" id="collect-total">—</span></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">รายการที่เลือกชำระ</span><span style="font-weight:600" id="pay-sel-count">12 รายการ</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">รายการที่เลือกชำระ</span><span style="font-weight:600" id="pay-sel-count">0 รายการ</span></div>
             <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--text-s)">ยอดตามรายการที่เลือก</span><span class="mono" style="font-weight:600" id="pay-sel-amt">—</span></div>
 
             <div style="margin-top:12px;padding:12px;background:var(--surface-alt);border-radius:var(--r);border:1px solid var(--border)">
@@ -957,34 +914,17 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ STAFF: REPORT ============ -->
 <div class="page" id="page-staff-report">
-  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">ดูรายงานการชำระ/ค้างชำระ</div></div><div class="flex gap-8"><select class="form-select" id="stf-report-month"><option>กำลังโหลด...</option></select></div></div>
-  <div class="content">
-    <div class="stats mb-24">
-      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)" id="stf-rpt-billed">—</div></div>
-      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)" id="stf-rpt-paid">—</div></div>
-      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)" id="stf-rpt-unpaid">—</div></div>
-      <div class="stat"><div class="stat-label">อัตราเก็บ</div><div class="stat-val" style="color:var(--green)" id="stf-rpt-pct">—</div></div>
-    </div>
-    <div class="card"><div class="card-body" style="padding:16px 24px"><div class="flex items-c gap-16"><div style="font-size:13px;font-weight:600;color:var(--text-s)">มุมมอง:</div><button class="btn btn-p btn-sm" id="sv-by-cust" onclick="switchStaffReportView('cust')">📊 รายลูกค้า</button><button class="btn btn-o btn-sm" id="sv-by-tax" onclick="switchStaffReportView('tax')">📑 รายค่าภาษี</button></div></div></div>
-    <div class="card mt-16" id="staff-report-cust"><div class="card-head"><div class="card-t">สรุปตามลูกค้า</div></div><div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r" style="font-weight:700">รวม</th><th class="text-r" style="color:var(--green)">ชำระ</th><th class="text-r" style="color:var(--red)">ค้าง</th><th>สถานะ</th></tr></thead>
-    <tbody>
-
-    </tbody></table></div></div>
-    <div class="card mt-16" id="staff-report-tax" style="display:none"><div class="card-head"><div class="card-t">สรุปตามประเภทค่าภาษี</div></div><div class="tbl-w"><table><thead><tr><th>ประเภท</th><th class="text-r">ยอดรวม</th><th class="text-r" style="color:var(--green)">ชำระแล้ว</th><th class="text-r" style="color:var(--red)">ค้างชำระ</th><th class="text-r">อัตราเก็บ</th></tr></thead>
-    <tbody id="stf-rpt-tax-tb">
-      <tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:24px">ข้อมูลจะแสดงเมื่อมียอดประจำเดือน</td></tr>
-    </tbody>
-    <tfoot id="stf-rpt-foot"></tfoot></table></div></div>
-  </div>
+  <div class="top-bar"><div><div class="pg-title">📋 รายงานสรุป</div><div class="pg-desc">รายงานครบทุกมุมมอง</div></div><div class="flex gap-8"><button class="btn btn-p btn-sm" onclick="exportReportPDF('staff')">📥 ดาวน์โหลด PDF</button></div></div>
+  <div class="content" id="report-area-staff"></div>
 </div>
 
 <!-- ============ STAFF: HISTORY ============ -->
 <div class="page" id="page-staff-history">
   <div class="top-bar"><div><div class="pg-title">🕐 ประวัติการเก็บเงิน</div><div class="pg-desc">ดูประวัติการรับชำระย้อนหลัง</div></div><div class="role-tag role-tag-staff">👩‍💼 พนักงาน</div></div>
   <div class="content">
-    <div class="card"><div class="tbl-w"><table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th>ใบแจ้งหนี้</th><th>ช่องทาง</th><th class="text-r">จำนวนเงิน</th><th>สถานะ</th><th></th></tr></thead>
-    <tbody>
-      <tr id="staff-hist-empty"><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">ยังไม่มีประวัติการเก็บเงิน</td></tr>
+    <div class="card"><div class="tbl-w"><table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th>ใบแจ้งหนี้</th><th>ช่องทาง</th><th class="text-r">จำนวนเงิน</th><th>สถานะ</th></tr></thead>
+    <tbody id="staff-hist-tb">
+      <tr><td colspan="6" style="text-align:center;color:var(--text-m);padding:24px">ยังไม่มีประวัติการเก็บเงิน</td></tr>
     </tbody></table></div></div>
   </div>
 </div>
@@ -1240,8 +1180,16 @@ function filterEntrySearch(val) {
 async function loadDashboard(role) {
   const d = await apiGet('getDashboard', {role});
   if(!d||d.error) return;
+
+  // Update dashboard month label
+  const $=id=>document.getElementById(id);
+  if($('mgr-dash-month') && d.currentMonth) $('mgr-dash-month').textContent='ภาพรวมนำทรัพย์การบัญชี · '+d.currentMonth;
+
+  // Update nav badge counts
+  if($('nav-approve-count') && d.pendingCount>0) { $('nav-approve-count').textContent=d.pendingCount; $('nav-approve-count').style.display=''; }
+  if($('nav-submit-count') && d.pendingCount>0) { $('nav-submit-count').textContent=d.pendingCount; $('nav-submit-count').style.display=''; }
+
   if(role==='mgr') {
-    const $=id=>document.getElementById(id);
     if($('mgr-s-cust')) $('mgr-s-cust').textContent=d.totalCustomers||0;
     if($('mgr-s-billed')) $('mgr-s-billed').textContent=fmtBaht(d.totalBilled);
     if($('mgr-s-paid')) $('mgr-s-paid').textContent=fmtBaht(d.totalPaid);
@@ -1258,6 +1206,13 @@ async function loadDashboard(role) {
       if(!d.pendingApproval||!d.pendingApproval.length) pl.innerHTML='<div style="text-align:center;color:var(--green);padding:24px">✅ ไม่มีรายการรออนุมัติ</div>';
       else pl.innerHTML=d.pendingApproval.map(p=>'<div class="approval-card pending"><div class="flex items-c jc-b"><div><div style="font-weight:600">'+p.custName+' · '+fmtBaht(p.amount)+'</div><div style="font-size:12px;color:var(--text-s)">'+p.channel+' · '+p.staff+' · '+p.date+'</div></div><span class="badge b-orange"><span class="dot"></span>รออนุมัติ</span></div></div>').join('');
     }
+  } else {
+    // Staff dashboard
+    if($('stf-s-inv')) $('stf-s-inv').textContent=d.pendingCount||0;
+    if($('stf-s-wait')) $('stf-s-wait').textContent=fmtBaht(d.totalBilled-d.totalPaid);
+    if($('stf-s-done')) $('stf-s-done').textContent=fmtBaht(d.totalPaid);
+    if($('stf-s-pend')) $('stf-s-pend').textContent=d.pendingCount||0;
+    if($('staff-dash-desc') && d.currentMonth) $('staff-dash-desc').textContent='งานเรียกเก็บ · '+d.currentMonth;
   }
 }
 
@@ -1287,7 +1242,7 @@ function addPayChannel(){
   const c=document.getElementById('pay-channels'); if(!c)return;
   const n=c.querySelectorAll('.pay-ch-row').length+1, d=document.createElement('div');
   d.className='pay-ch-row'; d.id='pay-ch-'+n;
-  d.innerHTML='<select class="form-select" style="flex:1;font-size:16px"><option>โอนเงิน</option><option>เงินสด</option><option>เช็ค</option><option>อื่นๆ</option></select><select class="form-select" style="flex:1;font-size:16px"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option></select><input class="form-input pay-amt-input" style="flex:1;font-size:18px;text-align:right;font-family:JetBrains Mono" placeholder="0" oninput="updatePayTotal()" /><button class="btn btn-danger btn-sm" onclick="removePayChannel('+n+')" style="font-size:16px;padding:12px 16px">✕</button>';
+  d.innerHTML='<select class="form-select" style="flex:1;font-size:16px"><option>โอนเงิน</option><option>เงินสด</option><option>เช็ค</option><option>อื่นๆ</option></select><select class="form-select" style="flex:1;font-size:16px"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option></select><input class="form-input pay-amt-input" inputmode="decimal" style="flex:1;font-size:18px;text-align:right;font-family:JetBrains Mono" placeholder="0" oninput="updatePayTotal()" /><button class="btn btn-danger btn-sm" onclick="removePayChannel('+n+')" style="font-size:16px;padding:12px 16px">✕</button>';
   c.appendChild(d);
 }
 function removePayChannel(n){const e=document.getElementById('pay-ch-'+n);if(e)e.remove();updatePayTotal()}
@@ -1295,21 +1250,87 @@ function removePayChannel(n){const e=document.getElementById('pay-ch-'+n);if(e)e
 function updatePayTotal(){
   const inputs=document.querySelectorAll('.pay-amt-input');
   let totalPaid=0; inputs.forEach(i=>totalPaid+=parseFloat(i.value.replace(/,/g,''))||0);
-  const expected=18600, diff=totalPaid-expected;
-  const tE=document.getElementById('pay-total-display');
+  // Calculate expected from selected pay items
+  let expected=0; document.querySelectorAll('.pay-item.sel').forEach(e=>expected+=parseFloat(e.dataset.amt||0));
+  const diff=totalPaid-expected;
+  const tE=document.getElementById('pay-total-paid');
   if(tE) tE.textContent=fmtBaht(totalPaid);
-  const dE=document.getElementById('pay-diff'),dB=document.getElementById('pay-diff-badge');
-  if(totalPaid===0){ if(dE){dE.textContent='—';dE.style.color='var(--text-m)'} if(dB){dB.textContent='กรุณากรอกยอดที่รับจริง';dB.className='badge b-blue'} return; }
+  const dE=document.getElementById('pay-diff'),dB=document.getElementById('pay-status-badge');
+  if(totalPaid===0){ if(dE){dE.textContent='—';dE.style.color='var(--text-m)'} if(dB){dB.innerHTML='<span class="badge b-blue"><span class="dot"></span>กรุณากรอกยอดที่รับจริง</span>'} return; }
   if(dE){dE.textContent=(diff>=0?'+':'')+fmtBaht(diff);dE.style.color=diff===0?'var(--green)':diff>0?'var(--blue)':'var(--red)'}
-  if(dB){if(diff===0){dB.textContent='✅ ยอดตรง';dB.className='badge b-green'}else if(diff>0){dB.textContent='💰 รับเกิน';dB.className='badge b-blue'}else{dB.textContent='⚠️ รับขาด';dB.className='badge b-red'}}
+  if(dB){if(diff===0){dB.innerHTML='<span class="badge b-green"><span class="dot"></span>✅ ยอดตรง</span>'}else if(diff>0){dB.innerHTML='<span class="badge b-blue"><span class="dot"></span>💰 รับเกิน</span>'}else{dB.innerHTML='<span class="badge b-red"><span class="dot"></span>⚠️ รับขาด</span>'}}
 }
 
-function togglePayItem(el){el.classList.toggle('sel');updatePaySummary()}
-function toggleAllPay(s){document.querySelectorAll('.pay-item').forEach(e=>s?e.classList.add('sel'):e.classList.remove('sel'));updatePaySummary()}
+function togglePayItem(el){el.classList.toggle('sel');updatePaySummary();updatePayTotal()}
+function toggleMonthAll(monthGroup, select){
+  monthGroup.querySelectorAll('.pay-item').forEach(e => select ? e.classList.add('sel') : e.classList.remove('sel'));
+  updatePaySummary();updatePayTotal();
+}
+function toggleAllPay(s){document.querySelectorAll('.pay-item').forEach(e=>s?e.classList.add('sel'):e.classList.remove('sel'));updatePaySummary();updatePayTotal()}
 function updatePaySummary(){
   const it=document.querySelectorAll('.pay-item.sel');let t=0;it.forEach(e=>t+=parseFloat(e.dataset.amt||0));
-  const s=document.getElementById('pay-sel-total'),c=document.getElementById('pay-sel-count');
+  const s=document.getElementById('pay-sel-amt'),c=document.getElementById('pay-sel-count');
   if(s) s.textContent=fmtBaht(t); if(c) c.textContent=it.length+' รายการ';
+}
+
+let collectCustCode='',collectCustName='';
+async function loadCollectItems(custCode, custName) {
+  collectCustCode = custCode;
+  collectCustName = custName || custCode;
+  const hdr = document.getElementById('collect-header');
+  if(hdr) hdr.textContent = custCode + ' — ' + (custName||'');
+  const sub = document.getElementById('collect-sub');
+  if(sub) sub.textContent = 'กำลังโหลดรายการค้างชำระ...';
+  const list = document.getElementById('collect-items-list');
+  if(list) list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</div>';
+
+  const data = await apiGet('getUnpaidItems', { custCode });
+  if (!data || data.error) {
+    if(list) list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ</div>';
+    return;
+  }
+  // Only unpaid items
+  const unpaid = data.filter(it => !it.paid);
+  if (!unpaid.length) {
+    if(list) list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--green)"><div style="font-size:32px;margin-bottom:8px">✅</div>ไม่มียอดค้างชำระ</div>';
+    if(sub) sub.textContent = 'ไม่มีรายการค้างชำระ';
+    return;
+  }
+  
+  // Group by month
+  const byMonth = {};
+  unpaid.forEach(it => {
+    if(!byMonth[it.month]) byMonth[it.month] = [];
+    byMonth[it.month].push(it);
+  });
+  const months = Object.keys(byMonth).sort();
+  
+  let totalAll = 0;
+  let html = '';
+  months.forEach(m => {
+    const items = byMonth[m];
+    const monthTotal = items.reduce((s,it) => s + it.amount, 0);
+    totalAll += monthTotal;
+    html += '<div class="pay-month-group" data-month="' + m + '">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--surface-alt);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleMonthAll(this.parentElement,!this.parentElement.querySelector(\'.pay-item:not(.sel)\'))">';
+    html += '<div style="font-weight:700;font-size:14px">📅 ' + m + ' <span style="font-size:12px;font-weight:400;color:var(--text-m)">(' + items.length + ' รายการ)</span></div>';
+    html += '<div class="flex items-c gap-8"><span class="mono" style="font-weight:600">' + fmtBaht(monthTotal) + '</span><button class="btn btn-sm btn-o" onclick="event.stopPropagation();toggleMonthAll(this.closest(\'.pay-month-group\'),true)">☑️ เลือกทั้งเดือน</button></div>';
+    html += '</div>';
+    items.forEach(it => {
+      html += '<div class="pay-item" data-amt="' + it.amount + '" data-month="' + it.month + '" data-svc="' + it.serviceKey + '" onclick="togglePayItem(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s">';
+      html += '<div class="flex items-c gap-12"><div class="pay-check" style="width:22px;height:22px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s"></div>';
+      html += '<div><div style="font-weight:500">' + it.serviceLabel + '</div><div style="font-size:11px;color:var(--text-m)">' + it.month + '</div></div></div>';
+      html += '<div class="mono" style="font-weight:700;font-size:15px">' + fmtBaht(it.amount) + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  
+  if(list) list.innerHTML = html;
+  if(sub) sub.textContent = unpaid.length + ' รายการค้างชำระ · ' + months.length + ' เดือน · รวม ' + fmtBaht(totalAll);
+  const ct = document.getElementById('collect-total');
+  if(ct) ct.textContent = fmtBaht(totalAll);
+  updatePaySummary();
 }
 
 // ===== ENTRY PAGE =====
@@ -1393,10 +1414,513 @@ async function saveEntry(){
   } else { alert('✅ บันทึกสำเร็จ! (Demo)');resetEntryArea(); }
 }
 
-// ===== REPORT =====
-function switchReportView(v){
-  ['cust','tax','one'].forEach(x=>{document.getElementById('report-by-'+x).style.display=x===v?'block':'none';document.getElementById('view-by-'+x).className='btn btn-sm '+(x===v?'btn-p':'btn-o')});
-  const cw=document.getElementById('cust-select-wrap');if(cw)cw.style.display=v==='one'?'block':'none';
+// ===== REPORT SYSTEM =====
+let reportCache = {};
+
+function buildReportShell(containerId) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = `
+  <!-- Report Tabs -->
+  <div class="in-tabs mb-24" id="${containerId}-tabs">
+    <button class="in-tab active" onclick="switchRptTab('${containerId}','entries')">📝 ยอดที่บันทึก</button>
+    <button class="in-tab" onclick="switchRptTab('${containerId}','payments')">💳 การชำระ</button>
+    <button class="in-tab" onclick="switchRptTab('${containerId}','customer')">👤 รายลูกค้า</button>
+    <button class="in-tab" onclick="switchRptTab('${containerId}','outstanding')">⚠️ ค้างชำระ</button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="card mb-16" id="${containerId}-filter"><div class="card-body" style="padding:12px 20px">
+    <div class="flex items-c gap-12" style="flex-wrap:wrap">
+      <div class="form-group" style="margin:0;flex:1;min-width:150px">
+        <label class="form-label" style="font-size:11px;margin-bottom:4px">📅 เดือน/ปี</label>
+        <select class="form-select" id="${containerId}-month" onchange="loadReport('${containerId}')" style="font-size:13px"></select>
+      </div>
+      <div class="form-group" style="margin:0;flex:1;min-width:150px;display:none" id="${containerId}-cust-wrap">
+        <label class="form-label" style="font-size:11px;margin-bottom:4px">👤 ลูกค้า</label>
+        <select class="form-select" id="${containerId}-cust" onchange="loadReport('${containerId}')" style="font-size:13px"><option value="">— ทุกราย —</option></select>
+      </div>
+      <div style="padding-top:16px"><button class="btn btn-p btn-sm" onclick="loadReport('${containerId}')">🔍 ดูรายงาน</button></div>
+    </div>
+  </div></div>
+
+  <!-- Stats -->
+  <div class="stats mb-24" id="${containerId}-stats" style="display:none"></div>
+
+  <!-- Report Body -->
+  <div id="${containerId}-body" style="text-align:center;padding:40px;color:var(--text-m)">
+    <div style="font-size:32px;margin-bottom:8px">📊</div>
+    <div>กดปุ่ม "ดูรายงาน" เพื่อโหลดข้อมูล</div>
+  </div>`;
+
+  // Populate month dropdown
+  populateReportMonths(containerId);
+  // Populate customer dropdown
+  populateReportCusts(containerId);
+}
+
+function populateReportMonths(cid) {
+  const sel = document.getElementById(cid + '-month');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">ทั้งหมด</option>';
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const m = d.getMonth();
+    const y = d.getFullYear() + 543;
+    const short = THAI_MONTHS[m] + ' ' + String(y).slice(-2);
+    const full = THAI_MONTHS_FULL[m] + ' ' + y;
+    const opt = document.createElement('option');
+    opt.value = short; opt.textContent = full;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function populateReportCusts(cid) {
+  const sel = document.getElementById(cid + '-cust');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— ทุกราย —</option>';
+  allCustomers.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.code; opt.textContent = c.code + ' ' + c.name;
+    sel.appendChild(opt);
+  });
+}
+
+let currentRptTab = {};
+function switchRptTab(cid, tab) {
+  currentRptTab[cid] = tab;
+  const tabs = document.querySelectorAll('#' + cid + '-tabs .in-tab');
+  const labels = ['entries','payments','customer','outstanding'];
+  tabs.forEach((t, i) => t.classList.toggle('active', labels[i] === tab));
+  // Show/hide customer filter
+  const cw = document.getElementById(cid + '-cust-wrap');
+  if (cw) cw.style.display = tab === 'customer' ? 'block' : 'none';
+  loadReport(cid);
+}
+
+async function loadReport(cid) {
+  const tab = currentRptTab[cid] || 'entries';
+  const month = document.getElementById(cid + '-month')?.value || '';
+  const cust = document.getElementById(cid + '-cust')?.value || '';
+  const body = document.getElementById(cid + '-body');
+  const stats = document.getElementById(cid + '-stats');
+  if (!body) return;
+  body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-m)">⏳ กำลังโหลดรายงาน...</div>';
+  if (stats) stats.style.display = 'none';
+
+  const params = { type: tab, month, custCode: cust };
+  const data = await apiGet('getReport', params);
+  if (!data || data.error) {
+    body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ: ' + (data?.error || 'ไม่ทราบสาเหตุ') + '</div>';
+    return;
+  }
+  reportCache[cid] = { tab, data, month, cust };
+
+  switch (tab) {
+    case 'entries': renderRptEntries(cid, data); break;
+    case 'payments': renderRptPayments(cid, data); break;
+    case 'customer': renderRptCustomer(cid, data); break;
+    case 'outstanding': renderRptOutstanding(cid, data); break;
+  }
+}
+
+// ===== RENDER: ยอดที่บันทึก =====
+function renderRptEntries(cid, d) {
+  const stats = document.getElementById(cid + '-stats');
+  const body = document.getElementById(cid + '-body');
+  if (stats) {
+    stats.style.display = '';
+    stats.innerHTML = `
+      <div class="stat"><div class="stat-label">รายการทั้งหมด</div><div class="stat-val" style="color:var(--blue)">${d.totalEntries}</div></div>
+      <div class="stat"><div class="stat-label">บันทึกวันนี้</div><div class="stat-val" style="color:var(--accent)">${d.todayCount}</div></div>
+      <div class="stat"><div class="stat-label">ยอดเรียกเก็บ</div><div class="stat-val" style="color:var(--blue)">${fmtBaht(d.totalBilled)}</div></div>
+      <div class="stat"><div class="stat-label">ชำระแล้ว</div><div class="stat-val" style="color:var(--green)">${fmtBaht(d.totalPaid)}</div></div>
+      <div class="stat"><div class="stat-label">ค้างชำระ</div><div class="stat-val" style="color:var(--red)">${fmtBaht(d.totalOutstanding)}</div></div>`;
+  }
+  if (!d.customers || !d.customers.length) {
+    body.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;padding:40px;color:var(--text-m)">ไม่พบข้อมูลยอดในช่วงที่เลือก</div></div>';
+    return;
+  }
+  // Today section
+  let html = '';
+  if (d.todayEntries && d.todayEntries.length) {
+    html += '<div class="card mb-16"><div class="card-head"><div class="card-t">📌 บันทึกวันนี้ (' + d.today + ')</div></div><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ลูกค้า</th><th>เดือน</th><th class="text-r">ยอดรวม</th><th>สถานะ</th></tr></thead><tbody>';
+    d.todayEntries.forEach(e => {
+      html += '<tr><td class="mono">' + e.code + '</td><td><strong>' + e.name + '</strong></td><td>' + e.month + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(e.total) + '</td><td>' + statusBadge(e.status) + '</td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+  }
+  // All customers
+  html += '<div class="card"><div class="card-head"><div class="card-t">📊 ยอดทั้งหมด — ' + (d.month || 'ทุกเดือน') + '</div></div><div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">เดือน</th><th class="text-r">ค่าทำบัญชี</th><th class="text-r">ภพ 30</th><th class="text-r">ภงด 3,53</th><th class="text-r">ภธ 40</th><th class="text-r">อื่นๆ</th><th class="text-r" style="font-weight:700">รวม</th><th>สถานะ</th></tr></thead><tbody>';
+  let gt = 0;
+  d.customers.forEach(c => {
+    c.months.forEach((m, i) => {
+      const others = (m.pnd90||0)+(m.pnd94||0)+(m.audit||0)+(m.pnd51||0)+(m.pnd50||0)+(m.other||0);
+      html += '<tr>' + (i === 0 ? '<td rowspan="' + c.months.length + '"><strong>' + c.name + '</strong><br><span class="mono" style="font-size:11px;color:var(--text-m)">' + c.code + '</span></td>' : '') +
+        '<td>' + m.month + '</td><td class="text-r mono">' + (m.accounting||0).toLocaleString() + '</td><td class="text-r mono">' + (m.vat||0).toLocaleString() + '</td><td class="text-r mono">' + (m.wht||0).toLocaleString() + '</td><td class="text-r mono">' + (m.sbt||0).toLocaleString() + '</td><td class="text-r mono">' + (others||0).toLocaleString() + '</td><td class="text-r mono" style="font-weight:700">' + (m.total||0).toLocaleString() + '</td><td>' + statusBadge(m.status) + '</td></tr>';
+    });
+    gt += c.grandTotal;
+  });
+  html += '</tbody><tfoot><tr style="background:var(--surface-alt);font-weight:700"><td colspan="7">รวมทั้งหมด</td><td class="text-r mono" style="color:var(--accent)">' + fmtBaht(gt) + '</td><td></td></tr></tfoot></table></div></div>';
+  body.innerHTML = html;
+}
+
+// ===== RENDER: การชำระ =====
+function renderRptPayments(cid, d) {
+  const stats = document.getElementById(cid + '-stats');
+  const body = document.getElementById(cid + '-body');
+  if (stats) {
+    stats.style.display = '';
+    stats.innerHTML = `
+      <div class="stat"><div class="stat-label">รออนุมัติ</div><div class="stat-val" style="color:var(--orange)">${d.pendingCount}</div><div class="stat-sub">${fmtBaht(d.pendingTotal)}</div></div>
+      <div class="stat"><div class="stat-label">อนุมัติแล้ว</div><div class="stat-val" style="color:var(--green)">${d.approvedCount}</div><div class="stat-sub">${fmtBaht(d.approvedTotal)}</div></div>
+      <div class="stat"><div class="stat-label">ปฏิเสธ</div><div class="stat-val" style="color:var(--red)">${d.rejectedCount}</div><div class="stat-sub">${fmtBaht(d.rejectedTotal)}</div></div>`;
+  }
+  function payTable(title, icon, items, color) {
+    if (!items || !items.length) return '<div class="card mb-16"><div class="card-head"><div class="card-t">' + icon + ' ' + title + '</div></div><div class="card-body" style="text-align:center;padding:24px;color:var(--text-m)">ไม่มีรายการ</div></div>';
+    let h = '<div class="card mb-16"><div class="card-head"><div class="card-t">' + icon + ' ' + title + ' <span class="badge b-' + color + '" style="margin-left:8px">' + items.length + '</span></div></div><div class="tbl-w"><table><thead><tr><th>เลขที่</th><th>ลูกค้า</th><th>ช่องทาง</th><th>วันที่</th><th class="text-r">จำนวนเงิน</th><th>พนักงาน</th></tr></thead><tbody>';
+    items.forEach(p => {
+      h += '<tr><td class="mono" style="font-size:12px">' + (p.payNo||'—') + '</td><td><strong>' + (p.custName||'—') + '</strong><br><span class="mono" style="font-size:11px;color:var(--text-m)">' + (p.custCode||'') + '</span></td><td>' + (p.channel||'—') + (p.bank && p.bank !== '—' ? '<br><span style="font-size:11px;color:var(--text-m)">' + p.bank + '</span>' : '') + '</td><td class="mono">' + (p.date||'—') + '</td><td class="text-r mono" style="font-weight:700">' + fmtBaht(p.amount) + '</td><td>' + (p.staff||'—') + '</td></tr>';
+    });
+    let total = items.reduce((s, p) => s + (p.amount||0), 0);
+    h += '</tbody><tfoot><tr style="background:var(--surface-alt);font-weight:700"><td colspan="4">รวม ' + items.length + ' รายการ</td><td class="text-r mono" style="color:var(--accent)">' + fmtBaht(total) + '</td><td></td></tr></tfoot></table></div></div>';
+    return h;
+  }
+  body.innerHTML = payTable('รออนุมัติ','⏳', d.pending, 'orange') + payTable('อนุมัติแล้ว','✅', d.approved, 'green') + payTable('ปฏิเสธ','❌', d.rejected, 'red');
+}
+
+// ===== RENDER: รายลูกค้า =====
+function renderRptCustomer(cid, d) {
+  const stats = document.getElementById(cid + '-stats');
+  const body = document.getElementById(cid + '-body');
+  if (stats) stats.style.display = 'none';
+
+  if (!d.customers || !d.customers.length) {
+    body.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;padding:40px;color:var(--text-m)">ไม่พบข้อมูลลูกค้าในช่วงที่เลือก</div></div>';
+    return;
+  }
+  let html = '';
+  d.customers.forEach(c => {
+    const outstanding = c.totalBilled - c.totalPaid;
+    const paidPct = c.totalBilled > 0 ? Math.round(c.totalPaid / c.totalBilled * 100) : 0;
+    html += '<div class="card mb-16"><div class="card-head"><div class="card-t">👤 ' + c.name + ' <span class="mono" style="font-size:12px;color:var(--text-m);margin-left:8px">' + c.code + '</span></div><div style="font-size:13px"><span style="color:var(--green);font-weight:600">ชำระ ' + fmtBaht(c.totalPaid) + '</span> / <span style="font-weight:600">' + fmtBaht(c.totalBilled) + '</span>' + (outstanding > 0 ? ' · <span style="color:var(--red);font-weight:600">ค้าง ' + fmtBaht(outstanding) + '</span>' : '') + '</div></div>';
+    // Progress bar
+    html += '<div style="padding:0 24px 12px"><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + paidPct + '%;background:var(--green);border-radius:3px;transition:width .3s"></div></div><div style="font-size:11px;color:var(--text-m);margin-top:4px">ชำระแล้ว ' + paidPct + '%</div></div>';
+    // Items table
+    html += '<div class="tbl-w"><table><thead><tr><th>เดือน</th><th>รายการ</th><th class="text-r">จำนวนเงิน</th><th>สถานะชำระ</th></tr></thead><tbody>';
+    if (c.items && c.items.length) {
+      c.items.forEach(it => {
+        const isPaid = it.paid === true;
+        html += '<tr><td>' + it.month + '</td><td>' + it.service + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(it.amount) + '</td><td>' + (isPaid ? '<span class="badge b-green"><span class="dot"></span>ชำระแล้ว</span>' : '<span class="badge b-red"><span class="dot"></span>ค้างชำระ</span>') + '</td></tr>';
+      });
+    } else {
+      html += '<tr><td colspan="4" style="text-align:center;color:var(--text-m);padding:16px">ไม่มีรายการ</td></tr>';
+    }
+    html += '</tbody></table></div></div>';
+  });
+  body.innerHTML = html;
+}
+
+// ===== RENDER: ค้างชำระ =====
+function renderRptOutstanding(cid, d) {
+  const stats = document.getElementById(cid + '-stats');
+  const body = document.getElementById(cid + '-body');
+  if (stats) {
+    stats.style.display = '';
+    stats.innerHTML = `
+      <div class="stat"><div class="stat-label">ลูกค้าค้างชำระ</div><div class="stat-val" style="color:var(--red)">${d.totalCustomers}</div><div class="stat-sub">ราย</div></div>
+      <div class="stat"><div class="stat-label">ยอดค้างทั้งหมด</div><div class="stat-val" style="color:var(--red)">${fmtBaht(d.grandTotal)}</div></div>
+      <div class="stat"><div class="stat-label">รอชำระ/อนุมัติ</div><div class="stat-val" style="color:var(--orange)">${fmtBaht(d.grandPending)}</div></div>
+      <div class="stat"><div class="stat-label">คงค้างสุทธิ</div><div class="stat-val" style="color:var(--red);font-size:24px">${fmtBaht(d.netOutstanding)}</div></div>`;
+  }
+  if (!d.customers || !d.customers.length) {
+    body.innerHTML = '<div class="card"><div class="card-body" style="text-align:center;padding:40px;color:var(--green)"><div style="font-size:32px;margin-bottom:8px">✅</div>ไม่มียอดค้างชำระ</div></div>';
+    return;
+  }
+  let html = '<div class="card"><div class="card-head"><div class="card-t">⚠️ รายชื่อลูกค้าค้างชำระ</div></div><div class="tbl-w"><table><thead><tr><th>ลูกค้า</th><th class="text-r">จำนวนเดือนค้าง</th><th class="text-r">ยอดค้างรวม</th><th class="text-r">รอชำระ/อนุมัติ</th><th class="text-r" style="font-weight:700">คงค้างสุทธิ</th></tr></thead><tbody>';
+  d.customers.forEach(c => {
+    const net = c.totalOutstanding - c.pendingPayment;
+    html += '<tr><td><strong>' + c.name + '</strong><br><span class="mono" style="font-size:11px;color:var(--text-m)">' + c.code + '</span></td><td class="text-r"><span class="badge b-red">' + c.monthCount + ' เดือน</span></td><td class="text-r mono" style="font-weight:600;color:var(--red)">' + fmtBaht(c.totalOutstanding) + '</td><td class="text-r mono" style="color:var(--orange)">' + (c.pendingPayment > 0 ? fmtBaht(c.pendingPayment) : '—') + '</td><td class="text-r mono" style="font-weight:700;color:var(--red)">' + fmtBaht(net) + '</td></tr>';
+    // Expandable detail
+    if (c.monthDetails && c.monthDetails.length) {
+      html += '<tr><td colspan="5" style="padding:0"><details style="padding:8px 16px"><summary style="cursor:pointer;font-size:12px;color:var(--text-m);padding:4px 0">📋 ดูรายละเอียดรายเดือน (' + c.monthDetails.length + ' เดือน)</summary><table style="width:100%;margin:8px 0"><thead><tr style="font-size:11px;color:var(--text-m)"><th>เดือน</th><th>รายการ</th><th class="text-r">จำนวนเงิน</th></tr></thead><tbody>';
+      c.monthDetails.forEach(m => {
+        if (m.items && m.items.length) {
+          m.items.forEach((it, idx) => {
+            html += '<tr>' + (idx === 0 ? '<td rowspan="' + m.items.length + '" style="font-weight:600">' + m.month + '</td>' : '') + '<td>' + it.serviceLabel + '</td><td class="text-r mono">' + (it.amount||0).toLocaleString() + '</td></tr>';
+          });
+        } else {
+          html += '<tr><td style="font-weight:600">' + m.month + '</td><td>—</td><td class="text-r mono" style="font-weight:700">' + (m.total||0).toLocaleString() + '</td></tr>';
+        }
+      });
+      html += '</tbody></table></details></td></tr>';
+    }
+  });
+  html += '</tbody><tfoot><tr style="background:var(--surface-alt);font-weight:700"><td>รวมทั้งหมด (' + d.totalCustomers + ' ราย)</td><td></td><td class="text-r mono" style="color:var(--red)">' + fmtBaht(d.grandTotal) + '</td><td class="text-r mono" style="color:var(--orange)">' + fmtBaht(d.grandPending) + '</td><td class="text-r mono" style="color:var(--red);font-size:16px">' + fmtBaht(d.netOutstanding) + '</td></tr></tfoot></table></div></div>';
+  body.innerHTML = html;
+}
+
+// ===== PDF EXPORT =====
+async function exportReportPDF(role) {
+  const cid = 'report-area-' + role;
+  const body = document.getElementById(cid + '-body');
+  if (!body || body.textContent.trim().includes('กดปุ่ม')) {
+    alert('กรุณาโหลดรายงานก่อนดาวน์โหลด PDF');
+    return;
+  }
+  // Load html2pdf if not loaded
+  if (!window.html2pdf) {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    document.head.appendChild(s);
+    await new Promise(r => s.onload = r);
+  }
+  const tab = currentRptTab[cid] || 'entries';
+  const tabNames = { entries:'ยอดที่บันทึก', payments:'การชำระ', customer:'รายลูกค้า', outstanding:'ค้างชำระ' };
+  const filename = 'รายงาน-' + (tabNames[tab]||tab) + '-' + new Date().toISOString().slice(0,10) + '.pdf';
+
+  // Create printable wrapper
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'padding:20px;font-family:sans-serif;font-size:12px';
+  wrap.innerHTML = '<div style="text-align:center;margin-bottom:16px"><h2 style="margin:0">นำทรัพย์การบัญชี</h2><div style="color:#666;margin-top:4px">รายงาน' + (tabNames[tab]||'') + ' · พิมพ์วันที่ ' + new Date().toLocaleDateString('th-TH') + '</div></div>';
+  // Clone stats if visible
+  const statsEl = document.getElementById(cid + '-stats');
+  if (statsEl && statsEl.style.display !== 'none') {
+    wrap.appendChild(statsEl.cloneNode(true));
+  }
+  wrap.appendChild(body.cloneNode(true));
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+  html2pdf().set(opt).from(wrap).save();
+}
+
+// ===== INIT REPORTS ON PAGE NAVIGATE =====
+const origGoPage = goPage;
+goPage = function(id) {
+  origGoPage(id);
+  if (id === 'mgr-report' && !document.getElementById('report-area-mgr-tabs')) {
+    buildReportShell('report-area-mgr');
+    loadReport('report-area-mgr');
+  }
+  if (id === 'staff-report' && !document.getElementById('report-area-staff-tabs')) {
+    buildReportShell('report-area-staff');
+    loadReport('report-area-staff');
+  }
+  if (id === 'staff-history') loadHistory();
+  if (id === 'mgr-approve') loadApprove();
+  if (id === 'staff-submit') loadStaffSubmit();
+  if (id === 'staff-inv') loadStaffInvoices();
+  if (id === 'staff-collect' && collectCustCode) loadCollectItems(collectCustCode, collectCustName);
+};
+
+function goToCollect() {
+  if (invCustCode) {
+    collectCustCode = invCustCode;
+    collectCustName = invCustName;
+  }
+  goPage('staff-collect');
+  if (collectCustCode) loadCollectItems(collectCustCode, collectCustName);
+}
+
+// ===== LOAD: History =====
+async function loadHistory() {
+  const tb = document.getElementById('staff-hist-tb');
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</td></tr>';
+  const data = await apiGet('getPayments');
+  if (!data || data.error || !data.length) {
+    tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีประวัติการเก็บเงิน</td></tr>';
+    return;
+  }
+  data.sort((a, b) => (b.date||'').localeCompare(a.date||''));
+  tb.innerHTML = data.map(p => '<tr><td class="mono">' + (p.date||'—') + '</td><td><strong>' + (p.custName||'—') + '</strong></td><td class="mono" style="font-size:12px">' + (p.invNo||'—') + '</td><td>' + (p.channel||'—') + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(p.amount) + '</td><td>' + statusBadge(p.status) + '</td></tr>').join('');
+}
+
+// ===== LOAD: MGR Approve Page =====
+async function loadApprove() {
+  const pl = document.getElementById('approve-pending-list');
+  const dl = document.getElementById('approve-done-list');
+  if (pl) pl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</div>';
+  if (dl) dl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</div>';
+
+  const data = await apiGet('getPayments');
+  if (!data || data.error) {
+    if (pl) pl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ</div>';
+    return;
+  }
+
+  const pending = data.filter(p => p.status === 'รออนุมัติ');
+  const approved = data.filter(p => p.status === 'อนุมัติ');
+  const rejected = data.filter(p => p.status === 'ปฏิเสธ');
+
+  // Update badge
+  const badge = document.getElementById('nav-approve-count');
+  if (badge) { if (pending.length > 0) { badge.textContent = pending.length; badge.style.display = ''; } else { badge.style.display = 'none'; } }
+
+  // Pending
+  if (pl) {
+    if (!pending.length) pl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--green)"><div style="font-size:32px;margin-bottom:8px">✅</div>ไม่มีรายการรออนุมัติ</div>';
+    else pl.innerHTML = pending.map(p => renderApproveCard(p, 'pending')).join('');
+  }
+  // Approved
+  if (dl) {
+    if (!approved.length) dl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-m)"><div style="font-size:32px;margin-bottom:8px">📭</div>ยังไม่มีรายการที่อนุมัติ</div>';
+    else dl.innerHTML = approved.map(p => renderApproveCard(p, 'approved')).join('');
+  }
+  // Rejected
+  const rl = document.querySelector('#approve-reject > div');
+  if (rl) {
+    if (!rejected.length) rl.innerHTML = '<div style="font-size:32px;margin-bottom:12px">📭</div><div style="font-size:14px">ไม่มีรายการที่ไม่อนุมัติ</div>';
+    else rl.outerHTML = rejected.map(p => renderApproveCard(p, 'rejected')).join('');
+  }
+}
+
+function renderApproveCard(p, type) {
+  const colors = { pending: 'var(--orange)', approved: 'var(--green)', rejected: 'var(--red)' };
+  const labels = { pending: 'รออนุมัติ', approved: 'อนุมัติแล้ว', rejected: 'ไม่อนุมัติ' };
+  const badgeClass = { pending: 'b-orange', approved: 'b-green', rejected: 'b-red' };
+  let html = '<div class="card mb-12" style="border-left:4px solid ' + colors[type] + '">';
+  html += '<div class="card-body" style="padding:16px 20px"><div class="flex items-c jc-b" style="flex-wrap:wrap;gap:8px">';
+  html += '<div><div style="font-weight:700;font-size:15px">' + (p.custName||'—') + ' <span class="mono" style="font-size:12px;color:var(--text-m)">' + (p.custCode||'') + '</span></div>';
+  html += '<div style="font-size:13px;color:var(--text-m);margin-top:2px">' + (p.payNo||'—') + ' · ' + (p.channel||'—') + (p.bank && p.bank !== '—' ? ' · ' + p.bank : '') + ' · ' + (p.date||'—') + ' · ' + (p.staff||'—') + '</div></div>';
+  html += '<div class="flex items-c gap-12"><div class="mono" style="font-size:20px;font-weight:700;color:' + colors[type] + '">' + fmtBaht(p.amount) + '</div>';
+  html += '<span class="badge ' + badgeClass[type] + '"><span class="dot"></span>' + labels[type] + '</span></div></div>';
+  // Action buttons for pending
+  if (type === 'pending') {
+    html += '<div class="flex gap-8" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">';
+    html += '<button class="btn btn-p btn-sm" onclick="doApprove(' + p._rowIndex + ',\'' + (p.payNo||'') + '\',\'' + (p.invNo||'') + '\',\'' + (p.custCode||'') + '\',' + (p.amount||0) + ',\'' + (p.channel||'') + '\',\'' + (p.bank||'') + '\')">✅ อนุมัติ</button>';
+    html += '<button class="btn btn-danger btn-sm" onclick="doReject(' + p._rowIndex + ',\'' + (p.payNo||'') + '\')">❌ ไม่อนุมัติ</button>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+async function doApprove(rowIndex, payNo, invNo, custCode, amount, channel, bank) {
+  if (!confirm('ยืนยันอนุมัติ?\n\n' + payNo + ' · ' + fmtBaht(amount))) return;
+  const name = currentUser ? currentUser.name : 'ผู้จัดการ';
+  const r = await apiPost('approvePayment', {
+    rowIndex, payNo, invNo, custCode, amount, channel, bank, approvedBy: name
+  });
+  if (r && r.success) {
+    alert('✅ ' + r.message);
+    loadApprove();
+    loadDashboard('mgr');
+  } else {
+    alert('❌ ' + (r?.error || 'ไม่สามารถอนุมัติได้'));
+  }
+}
+
+async function doReject(rowIndex, payNo) {
+  const reason = prompt('เหตุผลที่ไม่อนุมัติ:');
+  if (reason === null) return;
+  const r = await apiPost('rejectPayment', { rowIndex, reason: reason || 'ปฏิเสธโดยผู้จัดการ' });
+  if (r && r.success) {
+    alert('✅ ' + r.message);
+    loadApprove();
+    loadDashboard('mgr');
+  } else {
+    alert('❌ ' + (r?.error || 'ไม่สามารถดำเนินการได้'));
+  }
+}
+
+// ===== LOAD: Staff Submit Page =====
+async function loadStaffSubmit() {
+  const pl = document.getElementById('staff-submit-pending');
+  const dl = document.getElementById('staff-submit-done');
+  if (pl) pl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</div>';
+  if (dl) dl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</div>';
+
+  const data = await apiGet('getPayments');
+  if (!data || data.error) {
+    if (pl) pl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ</div>';
+    return;
+  }
+
+  const pending = data.filter(p => p.status === 'รออนุมัติ');
+  const approved = data.filter(p => p.status === 'อนุมัติ');
+  const rejected = data.filter(p => p.status === 'ปฏิเสธ');
+
+  // Update badge
+  const badge = document.getElementById('nav-submit-count');
+  if (badge) { if (pending.length > 0) { badge.textContent = pending.length; badge.style.display = ''; } else { badge.style.display = 'none'; } }
+
+  function renderSubmitCard(p, type) {
+    const colors = { pending: 'var(--orange)', approved: 'var(--green)', rejected: 'var(--red)' };
+    const labels = { pending: '⏳ รออนุมัติ', approved: '✅ อนุมัติแล้ว', rejected: '❌ ส่งกลับแก้ไข' };
+    const badgeClass = { pending: 'b-orange', approved: 'b-green', rejected: 'b-red' };
+    let h = '<div class="card mb-12" style="border-left:4px solid ' + colors[type] + '"><div class="card-body" style="padding:14px 20px">';
+    h += '<div class="flex items-c jc-b" style="flex-wrap:wrap;gap:8px">';
+    h += '<div><div style="font-weight:600">' + (p.custName||'—') + '</div><div style="font-size:12px;color:var(--text-m)">' + (p.payNo||'') + ' · ' + (p.channel||'') + ' · ' + (p.date||'') + '</div></div>';
+    h += '<div class="flex items-c gap-8"><span class="mono" style="font-size:18px;font-weight:700">' + fmtBaht(p.amount) + '</span><span class="badge ' + badgeClass[type] + '"><span class="dot"></span>' + labels[type] + '</span></div>';
+    h += '</div>';
+    if (type === 'rejected' && p.note) h += '<div style="margin-top:8px;padding:8px 12px;background:var(--red-l,#fff0f0);border-radius:var(--r);font-size:12px;color:var(--red)">💬 ' + p.note + '</div>';
+    if (type === 'approved' && p.approvedDate) h += '<div style="margin-top:4px;font-size:11px;color:var(--text-m)">อนุมัติ: ' + p.approvedDate + ' โดย ' + (p.approvedBy||'') + '</div>';
+    h += '</div></div>';
+    return h;
+  }
+
+  if (pl) {
+    if (!pending.length) pl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--green)"><div style="font-size:32px;margin-bottom:8px">✅</div>ไม่มีรายการรออนุมัติ</div>';
+    else pl.innerHTML = pending.map(p => renderSubmitCard(p, 'pending')).join('');
+  }
+  if (dl) {
+    if (!approved.length) dl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-m)">ยังไม่มีรายการที่อนุมัติ</div>';
+    else dl.innerHTML = approved.map(p => renderSubmitCard(p, 'approved')).join('');
+  }
+  const rl = document.querySelector('#submit-return > div');
+  if (rl) {
+    if (!rejected.length) rl.innerHTML = '<div style="font-size:32px;margin-bottom:12px">✅</div><div style="font-size:14px">ไม่มีรายการที่ถูกส่งกลับ</div>';
+    else rl.outerHTML = '<div>' + rejected.map(p => renderSubmitCard(p, 'rejected')).join('') + '</div>';
+  }
+}
+
+// ===== LOAD: Staff Invoices =====
+async function loadStaffInvoices() {
+  // Load customer list into inv-cust-tbody
+  const tb = document.getElementById('inv-cust-tbody');
+  if (tb && allCustomers.length) {
+    tb.innerHTML = allCustomers.map(c =>
+      '<tr class="inv-cust-row" onclick="selectInvCust(\'' + c.code + '\',\'' + c.name + '\')" style="cursor:pointer"><td class="mono">' + c.code + '</td><td><strong>' + c.name + '</strong></td><td>' + statusBadge(c.status || 'ปกติ') + '</td></tr>'
+    ).join('');
+  } else if (tb) {
+    tb.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีข้อมูลลูกค้า</td></tr>';
+  }
+}
+
+// ===== LOAD: Staff Invoice Detail (when customer selected) =====
+async function loadInvDetail(custCode) {
+  const tb = document.getElementById('inv-detail-tbody');
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</td></tr>';
+
+  const data = await apiGet('getEntries', { custCode });
+  if (!data || data.error || !data.length) {
+    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มียอดสำหรับลูกค้านี้</td></tr>';
+    return;
+  }
+  // Filter unpaid
+  const unpaid = data.filter(e => e.status !== 'ชำระแล้ว' && e.code === custCode);
+  if (!unpaid.length) {
+    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--green)">✅ ไม่มียอดค้างชำระ</td></tr>';
+    return;
+  }
+  let total = 0;
+  tb.innerHTML = unpaid.map(e => {
+    total += e.total || 0;
+    return '<tr><td>' + (e.month||'') + '</td><td>' + (e.date||'') + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(e.total) + '</td><td>' + statusBadge(e.status) + '</td><td><input type="checkbox" class="inv-check" data-amt="' + (e.total||0) + '" data-month="' + (e.month||'') + '" checked /></td></tr>';
+  }).join('');
+  const totalEl = document.getElementById('inv-list-total');
+  if (totalEl) totalEl.textContent = fmtBaht(total);
 }
 
 // ===== INVOICE FLOW =====
@@ -1408,9 +1932,6 @@ function backToInvSelect(){document.getElementById('inv-step-select').style.disp
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
 function generateInvPreview(){const items=[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it[2];const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it[0]+'</td><td>'+it[1]+'</td><td class="text-r mono">'+it[2].toLocaleString()+'.00</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t)+'.00';document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
 
-// ===== STAFF REPORT =====
-function switchStaffReportView(v){document.getElementById('staff-report-cust').style.display=v==='cust'?'block':'none';document.getElementById('staff-report-tax').style.display=v==='tax'?'block':'none';document.getElementById('sv-by-cust').className='btn btn-sm '+(v==='cust'?'btn-p':'btn-o');document.getElementById('sv-by-tax').className='btn btn-sm '+(v==='tax'?'btn-p':'btn-o')}
-
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',function(){const td=new Date().toISOString().split('T')[0];document.querySelectorAll('input[type="date"]').forEach(i=>{if(i.value)i.value=td})});
 
@@ -1418,7 +1939,46 @@ document.addEventListener('DOMContentLoaded',function(){const td=new Date().toIS
 function switchInTab(btn,targetId){btn.parentElement.querySelectorAll('.in-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');const p=document.getElementById(targetId)?.parentElement;if(!p)return;const pf=targetId.split('-')[0]+'-';p.querySelectorAll(':scope > [id^="'+pf+'"]').forEach(d=>{d.style.display=d.id===targetId?'block':'none'})}
 
 // ===== CONFIRM SUBMIT =====
-function confirmSubmit(){const si=document.querySelectorAll('.pay-item.sel'),inp=document.querySelectorAll('.pay-amt-input');let tp=0;inp.forEach(i=>tp+=parseFloat(i.value.replace(/,/g,''))||0);if(!si.length){alert('⚠️ กรุณาเลือกอย่างน้อย 1 รายการ');return}if(tp<=0){alert('⚠️ กรุณากรอกจำนวนเงิน');return}let sa=0;si.forEach(e=>sa+=parseFloat(e.dataset.amt||0));if(confirm('ยืนยันส่งอนุมัติ?\n\n'+si.length+' รายการ · ยอดรับ: '+fmtBaht(tp))){alert('✅ บันทึกสำเร็จ! ส่งผู้จัดการอนุมัติแล้ว')}}
+async function confirmSubmit(){
+  const si=document.querySelectorAll('.pay-item.sel');
+  if(!si.length){alert('⚠️ กรุณาเลือกอย่างน้อย 1 รายการ');return}
+  
+  // Collect selected items
+  const items=[];
+  si.forEach(e=>items.push({month:e.dataset.month, serviceKey:e.dataset.svc, amount:parseFloat(e.dataset.amt||0)}));
+  const totalItems=items.reduce((s,it)=>s+it.amount,0);
+  
+  // Get payment channel info
+  const chEl=document.querySelector('#pay-ch-1 .pay-opt.sel');
+  const channel=chEl?chEl.querySelector('div:last-child').textContent:'โอนเงิน';
+  const bankEl=document.querySelector('#pay-ch-1 select');
+  const bank=bankEl?bankEl.value:'—';
+  const refEl=document.querySelector('#pay-ch-1 .mono[placeholder]') || document.querySelector('#pay-ch-1 input[placeholder*="สลิป"]');
+  const ref=refEl?refEl.value:'—';
+  const noteEl=document.querySelector('input[placeholder*="บันทึกเพิ่มเติม"]');
+  const note=noteEl?noteEl.value:'';
+  
+  // Confirm
+  const monthList=[...new Set(items.map(it=>it.month))].join(', ');
+  if(!confirm('ยืนยันส่งอนุมัติ?\n\n'+collectCustName+'\n'+items.length+' รายการ ('+monthList+')\nยอดรวม: '+fmtBaht(totalItems)+'\nช่องทาง: '+channel))return;
+  
+  if(API_URL){
+    const staffName=currentUser?currentUser.name:'พนักงาน';
+    const r=await apiPost('savePayment',{
+      custCode:collectCustCode, custName:collectCustName,
+      channel, bank, ref, note, staff:staffName,
+      items
+    });
+    if(r&&r.success){
+      alert('✅ '+r.message);
+      loadCollectItems(collectCustCode, collectCustName); // refresh
+    } else {
+      alert('❌ '+(r?.error||'ไม่สามารถบันทึกได้'));
+    }
+  } else {
+    alert('✅ บันทึก '+items.length+' รายการสำเร็จ! (Demo)');
+  }
+}
 </script>
 </body>
 </html>
