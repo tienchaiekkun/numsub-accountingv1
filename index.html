@@ -388,7 +388,7 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="content">
     <div class="stats" id="mgr-stats">
       <div class="stat"><div class="stat-label">ลูกค้าทั้งหมด</div><div class="stat-val" id="mgr-s-cust">—</div><div class="stat-sub">ราย</div></div>
-      <div class="stat"><div class="stat-label">ยอดเรียกเก็บเดือนนี้</div><div class="stat-val" style="color:var(--blue)" id="mgr-s-billed">—</div><div class="stat-sub" id="mgr-s-billed-sub"></div></div>
+      <div class="stat"><div class="stat-label">ยอดเรียกเก็บทั้งหมด</div><div class="stat-val" style="color:var(--blue)" id="mgr-s-billed">—</div><div class="stat-sub" id="mgr-s-billed-sub"></div></div>
       <div class="stat"><div class="stat-label">เก็บได้แล้ว</div><div class="stat-val" style="color:var(--green)" id="mgr-s-paid">—</div><div class="stat-sub" id="mgr-s-paid-pct"></div></div>
       <div class="stat"><div class="stat-label">รออนุมัติ</div><div class="stat-val" style="color:var(--orange)" id="mgr-s-pending">—</div><div class="stat-sub" id="mgr-s-pending-sub"></div></div>
     </div>
@@ -424,7 +424,7 @@ tbody tr:hover{background:var(--accent-l)}
     <div class="card mb-24"><div class="card-body">
       <div class="form-grid" style="grid-template-columns:1fr 1fr">
         <div class="form-group"><label class="form-label">📅 เดือน/ปี</label><select class="form-select" id="entry-month" onchange="onEntryMonthChange()"><option value="" selected>กำลังโหลด...</option></select></div>
-        <div class="form-group"><label class="form-label">📆 วันที่คำนวณ</label><input type="date" class="form-input" value="2026-01-23" /></div>
+        <div class="form-group"><label class="form-label">📆 วันที่คำนวณ</label><input type="date" class="form-input" id="entry-calc-date" /></div>
       </div>
     </div></div>
 
@@ -550,7 +550,7 @@ tbody tr:hover{background:var(--accent-l)}
     <div class="stats" id="staff-stats">
       <div class="stat"><div class="stat-label">ใบแจ้งหนี้รอเก็บ</div><div class="stat-val" style="color:var(--blue)" id="stf-s-inv">—</div><div class="stat-sub">ใบ</div></div>
       <div class="stat"><div class="stat-label">ยอดรอเก็บ</div><div class="stat-val" style="color:var(--orange)" id="stf-s-wait">—</div></div>
-      <div class="stat"><div class="stat-label">เก็บแล้วเดือนนี้</div><div class="stat-val" style="color:var(--green)" id="stf-s-done">—</div></div>
+      <div class="stat"><div class="stat-label">เก็บได้แล้ว</div><div class="stat-val" style="color:var(--green)" id="stf-s-done">—</div></div>
       <div class="stat"><div class="stat-label">รอผจก.อนุมัติ</div><div class="stat-val" style="color:var(--orange)" id="stf-s-pend">—</div></div>
     </div>
     <div class="card"><div class="card-head"><div class="card-t">📄 ใบแจ้งหนี้รอเก็บ</div></div><div class="tbl-w"><table><thead><tr><th>เลขที่</th><th>ลูกค้า</th><th>กำหนด</th><th class="text-r">ยอดค้าง</th><th>สถานะ</th><th></th></tr></thead>
@@ -1151,6 +1151,9 @@ async function setupRole(role) {
     goPage('staff-dash');
   }
   populateEntryMonths();
+  // Set today's date for entry calc
+  const ecd = document.getElementById('entry-calc-date');
+  if (ecd) ecd.value = new Date().toISOString().split('T')[0];
   loadSettings();
   loadCustomers();
   loadDashboard(role);
@@ -2188,6 +2191,8 @@ function generateInvPreview(){const items=invItemsCache||[];const tb=document.ge
 const bankName=appSettings['ธนาคาร']||appSettings['ชื่อธนาคาร']||'';const acctNo=appSettings['เลขที่บัญชี']||appSettings['เลขบัญชี']||'';const acctName=appSettings['ชื่อบัญชี']||appSettings['ชื่อสำนักงาน']||'นำทรัพย์การบัญชี';const el1=document.getElementById('inv-qr-acct-name');if(el1)el1.textContent='บัญชี '+acctName;const el2=document.getElementById('inv-bank-info');if(el2)el2.textContent=(bankName?'ธ.'+bankName+' ':'')+(acctNo||'');const el3=document.getElementById('inv-bank-name');if(el3)el3.textContent='ชื่อ: '+acctName;
 // Date
 const td=new Date();const thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const dateStr=td.getDate()+' '+thM[td.getMonth()]+' '+(td.getFullYear()+543);document.getElementById('inv-print-date').textContent=dateStr;
+// Set due date (15 days from today)
+const due=new Date(td);due.setDate(due.getDate()+15);const dueStr=due.getDate()+' '+thM[due.getMonth()]+' '+(due.getFullYear()+543);document.getElementById('inv-print-due').textContent=dueStr;
 document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
 
 // ===== EDIT CUSTOMER =====
