@@ -240,13 +240,13 @@ tbody tr:hover{background:var(--accent-l)}
 .inv-cust-row{transition:all .15s}
 .inv-cust-row:hover{background:var(--purple-l) !important;cursor:pointer}
 /* Payment item selection (collect page) */
-.pay-item{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:all .15s;gap:12px}
+.pay-item{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;gap:12px}
 .pay-item:hover{background:var(--accent-l)}
 .pay-item.sel{background:var(--green-l)}
 .pay-item.sel .pay-check{background:var(--green);border-color:var(--green);color:white}
 .pay-item.sel .pay-check::after{content:'✓'}
 .pay-item:not(.sel) .pay-check::after{content:''}
-.pay-item:not(.sel){opacity:.45}
+.pay-item:not(.sel){opacity:.6}
 .pay-item:not(.sel) .pay-item-amt{text-decoration:line-through;color:var(--text-m) !important}
 .pay-item-chk{flex-shrink:0}
 .pi-cb{width:22px;height:22px;border:2px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:transparent;transition:all .15s}
@@ -415,7 +415,7 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ MGR: ENTRY (LARGE UI) ============ -->
 <div class="page" id="page-mgr-entry">
-  <div class="top-bar"><div><div class="pg-title">✏️ บันทึกยอดประจำเดือน</div><div class="pg-desc">ใส่ค่าภาษี/ค่าบริการที่คำนวณแล้ว</div></div><div class="role-tag role-tag-mgr">👔 ผู้จัดการเท่านั้น</div></div>
+  <div class="top-bar"><div><div class="pg-title">✏️ บันทึกยอดประจำเดือน</div><div class="pg-desc">ใส่ค่าภาษี/ค่าบริการ — เลือกลูกค้า+เดือนเดิมเพื่อแก้ไข</div></div><div class="role-tag role-tag-mgr">👔 ผู้จัดการเท่านั้น</div></div>
   <div class="content mgr-form">
 
     <!-- Large month/date selection -->
@@ -672,10 +672,10 @@ tbody tr:hover{background:var(--accent-l)}
             <div class="qr-placeholder">
               <div style="font-size:32px;margin-bottom:4px">📱</div>
               <div>QR Code</div>
-              <div style="font-size:10px">บัญชี นำทรัพย์การบัญชี</div>
+              <div style="font-size:10px" id="inv-qr-acct-name">—</div>
             </div>
-            <div style="font-size:11px;color:var(--text-s)">ธ.กสิกรไทย xxx-x-xxxxx-x</div>
-            <div style="font-size:11px;color:var(--text-s)">ชื่อ: นำทรัพย์การบัญชี</div>
+            <div style="font-size:11px;color:var(--text-s)" id="inv-bank-info">—</div>
+            <div style="font-size:11px;color:var(--text-s)" id="inv-bank-name">—</div>
           </div>
           <div class="sign-section">
             <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-m);margin-bottom:8px">ลงนามรับใบแจ้งหนี้</div>
@@ -763,11 +763,11 @@ tbody tr:hover{background:var(--accent-l)}
                 <label class="form-label">💰 จำนวนเงินที่ชำระ</label>
                 <input class="form-input mono pay-amt-input" placeholder="0.00" inputmode="decimal" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-1-amt" />
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
-                <div class="form-group"><label class="form-label">เลขอ้างอิง/สลิป</label><input class="form-input mono" placeholder="เลขสลิป/เช็ค" /></div>
+              <div class="pay-bank-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select" id="pay-ch-1-bank"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
+                <div class="form-group"><label class="form-label">เลขอ้างอิง/สลิป</label><input class="form-input mono" placeholder="เลขสลิป/เช็ค" id="pay-ch-1-ref" /></div>
               </div>
-              <div class="form-group"><label class="form-label">วันที่รับ</label><input type="date" class="form-input" value="2026-02-07" /></div>
+              <div class="form-group"><label class="form-label">วันที่รับ</label><input type="date" class="form-input" id="pay-ch-1-date" /></div>
             </div>
 
           </div>
@@ -791,11 +791,11 @@ tbody tr:hover{background:var(--accent-l)}
                 <label class="form-label">💰 จำนวนเงินที่ชำระ</label>
                 <input class="form-input mono pay-amt-input" placeholder="0.00" inputmode="decimal" style="font-size:20px;font-weight:700;text-align:right;padding:12px 16px" oninput="updatePayTotal()" id="pay-ch-{N}-amt" />
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
-                <div class="form-group"><label class="form-label">เลขอ้างอิง/สลิป</label><input class="form-input mono" placeholder="เลขสลิป/เช็ค" /></div>
+              <div class="pay-bank-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="form-group"><label class="form-label">ธนาคาร</label><select class="form-select" id="pay-ch-{N}-bank"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option><option>ทหารไทยธนชาต</option><option>—</option></select></div>
+                <div class="form-group"><label class="form-label">เลขอ้างอิง/สลิป</label><input class="form-input mono" placeholder="เลขสลิป/เช็ค" id="pay-ch-{N}-ref" /></div>
               </div>
-              <div class="form-group"><label class="form-label">วันที่รับ</label><input type="date" class="form-input" value="2026-02-07" /></div>
+              <div class="form-group"><label class="form-label">วันที่รับ</label><input type="date" class="form-input" id="pay-ch-{N}-date" /></div>
             </div>
           </template>
 
@@ -1019,7 +1019,7 @@ async function apiPost(action, data = {}) {
 }
 
 // ===== STATE =====
-let loginRole = 'mgr', pinCode = '', currentUser = null, allCustomers = [];
+let loginRole = 'mgr', pinCode = '', currentUser = null, allCustomers = [], appSettings = {};
 const PIN_LEN = { mgr:5, staff:4 };
 
 // ===== HELPERS =====
@@ -1120,10 +1120,16 @@ async function refreshData() {
   const btn = document.getElementById('btn-refresh');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ โหลด...'; }
   try {
+    await loadSettings();
     await loadCustomers();
     await loadDashboard(loginRole);
   } catch(e) { console.error('Refresh error:', e); }
   if (btn) { btn.disabled = false; btn.textContent = '🔄 รีเฟรช'; }
+}
+
+async function loadSettings() {
+  const data = await apiGet('getSettings');
+  if (data && !data.error) appSettings = data;
 }
 
 async function setupRole(role) {
@@ -1143,6 +1149,7 @@ async function setupRole(role) {
     goPage('staff-dash');
   }
   populateEntryMonths();
+  loadSettings();
   loadCustomers();
   loadDashboard(role);
 }
@@ -1270,15 +1277,34 @@ document.querySelectorAll('.modal-bg').forEach(b=>b.addEventListener('click',e=>
 function openImgViewer(src){document.getElementById('img-view-src').src=src;openModal('img-view')}
 
 // ===== PAYMENT (Collect) =====
-function selPay(el){el.classList.toggle('sel');el.querySelectorAll('.pay-ch-row').forEach(r=>r.classList.toggle('sel',el.classList.contains('sel')))}
-var selPayCh=selPay;
+function selPayCh(el){
+  // Radio: deselect siblings, select this one
+  const parent = el.parentElement;
+  parent.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  // Show/hide bank fields based on method
+  const method = el.querySelector('div:last-child').textContent.trim();
+  const channel = el.closest('.pay-channel');
+  if (channel) {
+    const bankRow = channel.querySelector('.pay-bank-row');
+    if (bankRow) bankRow.style.display = (method === 'เงินสด') ? 'none' : 'grid';
+  }
+}
 
+let payChannelCount = 1;
 function addPayChannel(){
-  const c=document.getElementById('pay-channels'); if(!c)return;
-  const n=c.querySelectorAll('.pay-ch-row').length+1, d=document.createElement('div');
-  d.className='pay-ch-row'; d.id='pay-ch-'+n;
-  d.innerHTML='<select class="form-select" style="flex:1;font-size:16px"><option>โอนเงิน</option><option>เงินสด</option><option>เช็ค</option><option>อื่นๆ</option></select><select class="form-select" style="flex:1;font-size:16px"><option>กสิกรไทย</option><option>กรุงเทพ</option><option>ไทยพาณิชย์</option><option>กรุงไทย</option></select><input class="form-input pay-amt-input" inputmode="decimal" style="flex:1;font-size:18px;text-align:right;font-family:JetBrains Mono" placeholder="0" oninput="updatePayTotal()" /><button class="btn btn-danger btn-sm" onclick="removePayChannel('+n+')" style="font-size:16px;padding:12px 16px">✕</button>';
-  c.appendChild(d);
+  payChannelCount++;
+  const n = payChannelCount;
+  const tpl = document.getElementById('pay-channel-tpl');
+  if (!tpl) return;
+  const html = tpl.innerHTML.replace(/\{N\}/g, n);
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  const newCh = wrapper.firstElementChild;
+  document.getElementById('pay-channels').appendChild(newCh);
+  // Default to first method
+  const firstOpt = newCh.querySelector('.pay-opt');
+  if (firstOpt) selPayCh(firstOpt);
 }
 function removePayChannel(n){const e=document.getElementById('pay-ch-'+n);if(e)e.remove();updatePayTotal()}
 
@@ -1296,7 +1322,13 @@ function updatePayTotal(){
   if(dB){if(diff===0){dB.innerHTML='<span class="badge b-green"><span class="dot"></span>✅ ยอดตรง</span>'}else if(diff>0){dB.innerHTML='<span class="badge b-blue"><span class="dot"></span>💰 รับเกิน</span>'}else{dB.innerHTML='<span class="badge b-red"><span class="dot"></span>⚠️ รับขาด</span>'}}
 }
 
-function togglePayItem(el){el.classList.toggle('sel');updatePaySummary();updatePayTotal()}
+let _payUpdateTimer = null;
+function togglePayItem(el){
+  el.classList.toggle('sel');
+  // Debounce: update summary after rapid clicks settle
+  clearTimeout(_payUpdateTimer);
+  _payUpdateTimer = setTimeout(() => { updatePaySummary(); updatePayTotal(); }, 80);
+}
 function toggleMonthAll(monthGroup, select){
   monthGroup.querySelectorAll('.pay-item').forEach(e => select ? e.classList.add('sel') : e.classList.remove('sel'));
   updatePaySummary();updatePayTotal();
@@ -1306,12 +1338,27 @@ function updatePaySummary(){
   const it=document.querySelectorAll('.pay-item.sel');let t=0;it.forEach(e=>t+=parseFloat(e.dataset.amt||0));
   const s=document.getElementById('pay-sel-amt'),c=document.getElementById('pay-sel-count');
   if(s) s.textContent=fmtBaht(t); if(c) c.textContent=it.length+' รายการ';
+  // Auto-fill first channel amount if only 1 channel and amount is empty or was auto-filled
+  const firstAmt = document.getElementById('pay-ch-1-amt');
+  if (firstAmt && document.querySelectorAll('.pay-channel').length === 1) {
+    if (!firstAmt.value || firstAmt.dataset.autoFilled === 'true') {
+      firstAmt.value = t > 0 ? t.toLocaleString('en-US', {minimumFractionDigits: 0}) : '';
+      firstAmt.dataset.autoFilled = 'true';
+      updatePayTotal();
+    }
+  }
 }
 
 let collectCustCode='',collectCustName='';
 async function loadCollectItems(custCode, custName) {
   collectCustCode = custCode;
   collectCustName = custName || custCode;
+  // Set today's date on date inputs
+  const today = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.pay-channel input[type="date"]').forEach(d => d.value = today);
+  // Reset auto-fill flag
+  const firstAmt = document.getElementById('pay-ch-1-amt');
+  if (firstAmt) { firstAmt.value = ''; firstAmt.dataset.autoFilled = 'true'; firstAmt.onfocus = function(){ this.dataset.autoFilled = 'false'; }; }
   const hdr = document.getElementById('collect-header');
   if(hdr) hdr.textContent = custCode + ' — ' + (custName||'');
   const sub = document.getElementById('collect-sub');
@@ -1353,8 +1400,8 @@ async function loadCollectItems(custCode, custName) {
     html += '<div class="flex items-c gap-8"><span class="mono" style="font-weight:600">' + fmtBaht(monthTotal) + '</span><button class="btn btn-sm btn-o" onclick="event.stopPropagation();toggleMonthAll(this.closest(\'.pay-month-group\'),true)">☑️ เลือกทั้งเดือน</button></div>';
     html += '</div>';
     items.forEach(it => {
-      html += '<div class="pay-item" data-amt="' + it.amount + '" data-month="' + it.month + '" data-svc="' + it.serviceKey + '" onclick="togglePayItem(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s">';
-      html += '<div class="flex items-c gap-12"><div class="pay-check" style="width:22px;height:22px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s"></div>';
+      html += '<div class="pay-item" data-amt="' + it.amount + '" data-month="' + it.month + '" data-svc="' + it.serviceKey + '" onclick="togglePayItem(this)">';
+      html += '<div class="flex items-c gap-12"><div class="pay-check" style="width:22px;height:22px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px"></div>';
       html += '<div><div style="font-weight:500">' + it.serviceLabel + '</div><div style="font-size:11px;color:var(--text-m)">' + it.month + '</div></div></div>';
       html += '<div class="mono" style="font-weight:700;font-size:15px">' + fmtBaht(it.amount) + '</div>';
       html += '</div>';
@@ -1384,15 +1431,46 @@ async function selectCustEntry(code, name) {
   document.getElementById('sel-cust-sub').textContent='กำลังโหลด...';
   clearAllSvc();
   const ms=document.getElementById('entry-month');
-  const month=ms?ms.value:'ม.ค. 2569';
-  document.getElementById('sel-cust-sub').textContent='กำลังบันทึกยอด: '+month;
+  const month=ms?ms.value:'ม.ค. 69';
   window._entryCust={code,name,month};
+  window._entryEditMode=false;
 
   if(API_URL){
-    const prev=await apiGet('getPrevMonth',{custCode:code,currentMonth:month});
-    if(prev&&prev.found) showPrevBanner(prev); else showNewBanner();
+    // Check if entry already exists for this month
+    const existing = await apiGet('getEntry', {custCode: code, month});
+    if (existing && existing.found) {
+      // EDIT MODE: load existing data
+      window._entryEditMode = true;
+      document.getElementById('sel-cust-sub').innerHTML = '✏️ แก้ไขยอด: <strong>' + month + '</strong> <span class="badge b-blue">มีข้อมูลแล้ว</span>';
+      const keys = ['accounting','vat','wht','sbt','pnd90','pnd94','audit','pnd51','pnd50','other'];
+      const rows = document.querySelectorAll('#entry-area .svc-row-lg');
+      keys.forEach((k,i) => {
+        if (!rows[i]) return;
+        const inp = rows[i].querySelector('.svc-input-lg');
+        const v = existing.amounts[k] || 0;
+        if (inp && v > 0) { inp.value = v.toLocaleString(); rows[i].classList.add('has-val'); }
+      });
+      updateEntryTotal();
+      // Also load prev month for reference
+      const prev = await apiGet('getPrevMonth', {custCode:code, currentMonth:month});
+      if (prev && prev.found) showPrevBanner(prev); else hidePrevBanner();
+      // Change save button text
+      const saveBtn = document.querySelector('#entry-area .btn-p[onclick*="saveEntry"]');
+      if (saveBtn) saveBtn.innerHTML = '💾 อัพเดทยอด';
+    } else {
+      // NEW MODE
+      document.getElementById('sel-cust-sub').textContent = 'บันทึกยอดใหม่: ' + month;
+      const prev = await apiGet('getPrevMonth', {custCode:code, currentMonth:month});
+      if (prev && prev.found) showPrevBanner(prev); else showNewBanner();
+      const saveBtn = document.querySelector('#entry-area .btn-p[onclick*="saveEntry"]');
+      if (saveBtn) saveBtn.innerHTML = '💾 บันทึกยอด';
+    }
   } else { showNewBanner(); }
   window.scrollTo({top:document.getElementById('entry-area').offsetTop-80,behavior:'smooth'});
+}
+function hidePrevBanner() {
+  const pb = document.getElementById('prev-month-banner'); if (pb) pb.style.display = 'none';
+  const nb = document.getElementById('new-cust-banner'); if (nb) nb.style.display = 'none';
 }
 
 function showPrevBanner(prev){
@@ -1448,7 +1526,10 @@ async function saveEntry(){
   if(c===0){alert('⚠️ กรุณากรอกยอดอย่างน้อย 1 รายการ');return}
   if(!window._entryCust){alert('⚠️ กรุณาเลือกลูกค้าก่อน');return}
   const cu=window._entryCust;
-  if(!confirm('ยืนยันบันทึกยอด?\n\n'+cu.code+' — '+cu.name+'\nเดือน: '+cu.month+'\n'+c+' รายการ · ยอดรวม: '+fmtBaht(t)))return;
+  const confirmMsg = window._entryEditMode
+    ? 'ยืนยันอัพเดทยอด?\n\n'+cu.code+' — '+cu.name+'\nเดือน: '+cu.month+'\n'+c+' รายการ · ยอดรวม: '+fmtBaht(t)+'\n\n⚠️ ยอดเดิมจะถูกเขียนทับ'
+    : 'ยืนยันบันทึกยอด?\n\n'+cu.code+' — '+cu.name+'\nเดือน: '+cu.month+'\n'+c+' รายการ · ยอดรวม: '+fmtBaht(t);
+  if(!confirm(confirmMsg))return;
   if(API_URL){
     const r=await apiPost('saveEntry',{custCode:cu.code,custName:cu.name,month:cu.month,...amounts});
     if(r&&r.success){alert('✅ '+r.message+'\n\nเดือนถัดไป ระบบจะแนะนำยอดนี้');resetEntryArea()}
@@ -1942,12 +2023,20 @@ async function loadStaffInvoices() {
   // Load customer list into inv-cust-tbody
   const tb = document.getElementById('inv-cust-tbody');
   if (tb && allCustomers.length) {
-    tb.innerHTML = allCustomers.map(c =>
-      '<tr class="inv-cust-row" onclick="selectInvCust(\'' + c.code + '\',\'' + c.name + '\')" style="cursor:pointer"><td class="mono">' + c.code + '</td><td><strong>' + c.name + '</strong></td><td>' + statusBadge(c.status || 'ปกติ') + '</td></tr>'
-    ).join('');
+    tb.innerHTML = allCustomers.map((c, idx) => {
+      const ow = c.outstanding || 0;
+      const mo = c.monthsOwed || 0;
+      const owHtml = ow > 0 ? '<span style="color:var(--red);font-weight:600">' + fmtBaht(ow) + '</span>' : '<span style="color:var(--text-m)">—</span>';
+      const moHtml = mo > 0 ? '<span class="badge b-red">' + mo + ' เดือน</span>' : '<span style="color:var(--text-m)">—</span>';
+      return '<tr class="inv-cust-row" data-idx="' + idx + '" onclick="selectInvCustByIdx(' + idx + ')" style="cursor:pointer"><td style="text-align:center;font-size:18px">📄</td><td class="mono">' + esc(c.code) + '</td><td><strong>' + esc(c.name) + '</strong></td><td class="text-r">' + owHtml + '</td><td class="text-r">' + moHtml + '</td><td>' + statusBadge(c.status || 'ปกติ') + '</td></tr>';
+    }).join('');
   } else if (tb) {
-    tb.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีข้อมูลลูกค้า</td></tr>';
+    tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มีข้อมูลลูกค้า</td></tr>';
   }
+}
+function selectInvCustByIdx(idx) {
+  const c = allCustomers[idx];
+  if (c) selectInvCust(c.code, c.name);
 }
 
 // ===== LOAD: Invoice Items (unpaid items for invoice) =====
@@ -1990,7 +2079,12 @@ function filterInvCust(v){document.querySelectorAll('.inv-cust-row').forEach(r=>
 function selectInvCust(code,name){invCustCode=code;invCustName=name;document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-sel-name').textContent=code+' — '+name;document.getElementById('inv-sel-info').textContent='กำลังโหลดรายการค้างชำระ...';setInvFlow(2);loadInvItems(code,name)}
 function backToInvSelect(){document.getElementById('inv-step-select').style.display='block';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-cust-search').value='';filterInvCust('');setInvFlow(1)}
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
-function generateInvPreview(){const items=invItemsCache||[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it.amount;const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it.serviceLabel+'</td><td>'+it.month+'</td><td class="text-r mono">'+fmtBaht(it.amount)+'</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t);document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
+function generateInvPreview(){const items=invItemsCache||[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it.amount;const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it.serviceLabel+'</td><td>'+it.month+'</td><td class="text-r mono">'+fmtBaht(it.amount)+'</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t);document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');
+// Bank info from settings
+const bankName=appSettings['ธนาคาร']||appSettings['ชื่อธนาคาร']||'';const acctNo=appSettings['เลขที่บัญชี']||appSettings['เลขบัญชี']||'';const acctName=appSettings['ชื่อบัญชี']||appSettings['ชื่อสำนักงาน']||'นำทรัพย์การบัญชี';const el1=document.getElementById('inv-qr-acct-name');if(el1)el1.textContent='บัญชี '+acctName;const el2=document.getElementById('inv-bank-info');if(el2)el2.textContent=(bankName?'ธ.'+bankName+' ':'')+(acctNo||'');const el3=document.getElementById('inv-bank-name');if(el3)el3.textContent='ชื่อ: '+acctName;
+// Date
+const td=new Date();const thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const dateStr=td.getDate()+' '+thM[td.getMonth()]+' '+(td.getFullYear()+543);document.getElementById('inv-print-date').textContent=dateStr;
+document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
 
 // ===== EDIT CUSTOMER =====
 function openEditCust(idx) {
@@ -2058,30 +2152,55 @@ async function confirmSubmit(){
   si.forEach(e=>items.push({month:e.dataset.month, serviceKey:e.dataset.svc, amount:parseFloat(e.dataset.amt||0)}));
   const totalItems=items.reduce((s,it)=>s+it.amount,0);
   
-  // Get payment channel info
-  const chEl=document.querySelector('#pay-ch-1 .pay-opt.sel');
-  const channel=chEl?chEl.querySelector('div:last-child').textContent:'โอนเงิน';
-  const bankEl=document.querySelector('#pay-ch-1 select');
-  const bank=bankEl?bankEl.value:'—';
-  const refEl=document.querySelector('#pay-ch-1 .mono[placeholder]') || document.querySelector('#pay-ch-1 input[placeholder*="สลิป"]');
-  const ref=refEl?refEl.value:'—';
+  // Collect ALL payment channels
+  const channels = [];
+  document.querySelectorAll('.pay-channel').forEach(ch => {
+    const methodEl = ch.querySelector('.pay-opt.sel');
+    const method = methodEl ? methodEl.querySelector('div:last-child').textContent.trim() : 'โอนเงิน';
+    const amtEl = ch.querySelector('.pay-amt-input');
+    const amt = amtEl ? parseFloat(amtEl.value.replace(/,/g,'')) || 0 : 0;
+    const bankEl = ch.querySelector('select[id*="-bank"]');
+    const bank = bankEl ? bankEl.value : '—';
+    const refEl = ch.querySelector('input[id*="-ref"]');
+    const ref = refEl ? refEl.value : '';
+    const dateEl = ch.querySelector('input[type="date"]');
+    const payDate = dateEl ? dateEl.value : '';
+    if (amt > 0) channels.push({ method, amount: amt, bank, ref, payDate });
+  });
+  
+  if (!channels.length || channels.reduce((s,c) => s + c.amount, 0) === 0) {
+    alert('⚠️ กรุณากรอกจำนวนเงินที่ชำระ');
+    return;
+  }
+  
+  const totalPaid = channels.reduce((s,c) => s + c.amount, 0);
+  const channelSummary = channels.map(c => c.method + ' ' + fmtBaht(c.amount)).join(' + ');
+  
+  // For backward compatibility: main channel = first channel
+  const channel = channels[0].method;
+  const bank = channels[0].bank;
+  const ref = channels[0].ref;
+  
   const noteEl=document.querySelector('input[placeholder*="บันทึกเพิ่มเติม"]');
   const note=noteEl?noteEl.value:'';
   
   // Confirm
   const monthList=[...new Set(items.map(it=>it.month))].join(', ');
-  if(!confirm('ยืนยันส่งอนุมัติ?\n\n'+collectCustName+'\n'+items.length+' รายการ ('+monthList+')\nยอดรวม: '+fmtBaht(totalItems)+'\nช่องทาง: '+channel))return;
+  const diff = totalPaid - totalItems;
+  const diffText = diff === 0 ? '✅ ยอดตรง' : diff > 0 ? '💰 รับเกิน ' + fmtBaht(diff) : '⚠️ รับขาด ' + fmtBaht(Math.abs(diff));
+  if(!confirm('ยืนยันส่งอนุมัติ?\n\n'+collectCustName+'\n'+items.length+' รายการ ('+monthList+')\nยอดรวม: '+fmtBaht(totalItems)+'\nชำระ: '+channelSummary+'\n'+diffText))return;
   
   if(API_URL){
     const staffName=currentUser?currentUser.name:'พนักงาน';
     const r=await apiPost('savePayment',{
       custCode:collectCustCode, custName:collectCustName,
       channel, bank, ref, note, staff:staffName,
+      channels, totalPaid,
       items
     });
     if(r&&r.success){
       alert('✅ '+r.message);
-      loadCollectItems(collectCustCode, collectCustName); // refresh
+      loadCollectItems(collectCustCode, collectCustName);
     } else {
       alert('❌ '+(r?.error||'ไม่สามารถบันทึกได้'));
     }
