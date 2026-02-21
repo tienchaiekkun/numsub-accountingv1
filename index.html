@@ -215,6 +215,8 @@ tbody tr:hover{background:var(--accent-l)}
 .in-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);padding:0 24px}
 .in-tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--text-s);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;transition:all .15s}
 .in-tab:hover{color:var(--text)}.in-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.rpt-mode-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-m);font-size:12px !important;padding:4px 12px !important;border-radius:20px !important;cursor:pointer}
+.rpt-mode-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
 
 /* Highlight box */
 .hb{padding:14px 18px;border-radius:var(--rs);border:1px solid}
@@ -1554,10 +1556,28 @@ function buildReportShell(containerId) {
 
   <!-- Filter Bar -->
   <div class="card mb-16" id="${containerId}-filter"><div class="card-body" style="padding:12px 20px">
+    <div class="flex items-c gap-8 mb-12" style="flex-wrap:wrap">
+      <div style="font-size:12px;font-weight:600;color:var(--text-s)">กรองตาม:</div>
+      <button class="btn btn-sm rpt-mode-btn active" data-mode="month" onclick="switchRptMode('${containerId}','month')">📅 รอบเดือน</button>
+      <button class="btn btn-sm rpt-mode-btn" data-mode="daterange" onclick="switchRptMode('${containerId}','daterange')">📆 ช่วงวันที่บันทึก</button>
+    </div>
     <div class="flex items-c gap-12" style="flex-wrap:wrap">
-      <div class="form-group" style="margin:0;flex:1;min-width:150px">
+      <div class="form-group rpt-filter-month" style="margin:0;flex:1;min-width:150px">
         <label class="form-label" style="font-size:11px;margin-bottom:4px">📅 เดือน/ปี</label>
         <select class="form-select" id="${containerId}-month" onchange="loadReport('${containerId}')" style="font-size:13px"></select>
+      </div>
+      <div class="rpt-filter-date" style="display:none;flex:2;min-width:300px">
+        <div class="flex items-c gap-8">
+          <div class="form-group" style="margin:0;flex:1">
+            <label class="form-label" style="font-size:11px;margin-bottom:4px">📆 จากวันที่</label>
+            <input type="date" class="form-input" id="${containerId}-datefrom" style="font-size:13px" />
+          </div>
+          <div style="padding-top:14px;color:var(--text-m)">→</div>
+          <div class="form-group" style="margin:0;flex:1">
+            <label class="form-label" style="font-size:11px;margin-bottom:4px">📆 ถึงวันที่</label>
+            <input type="date" class="form-input" id="${containerId}-dateto" style="font-size:13px" />
+          </div>
+        </div>
       </div>
       <div class="form-group" style="margin:0;flex:1;min-width:150px;display:none" id="${containerId}-cust-wrap">
         <label class="form-label" style="font-size:11px;margin-bottom:4px">👤 ลูกค้า</label>
@@ -1612,6 +1632,29 @@ function populateReportCusts(cid) {
 }
 
 let currentRptTab = {};
+let currentRptMode = {}; // 'month' or 'daterange'
+
+function switchRptMode(cid, mode) {
+  currentRptMode[cid] = mode;
+  const filter = document.getElementById(cid + '-filter');
+  if (!filter) return;
+  filter.querySelectorAll('.rpt-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  filter.querySelectorAll('.rpt-filter-month').forEach(el => el.style.display = mode === 'month' ? '' : 'none');
+  filter.querySelectorAll('.rpt-filter-date').forEach(el => el.style.display = mode === 'daterange' ? 'flex' : 'none');
+  // Set default dates if empty
+  if (mode === 'daterange') {
+    const from = document.getElementById(cid + '-datefrom');
+    const to = document.getElementById(cid + '-dateto');
+    if (from && !from.value) {
+      const d = new Date(); d.setDate(1); // first of current month
+      from.value = d.toISOString().split('T')[0];
+    }
+    if (to && !to.value) {
+      to.value = new Date().toISOString().split('T')[0];
+    }
+  }
+}
+
 function switchRptTab(cid, tab) {
   currentRptTab[cid] = tab;
   const tabs = document.querySelectorAll('#' + cid + '-tabs .in-tab');
@@ -1625,7 +1668,10 @@ function switchRptTab(cid, tab) {
 
 async function loadReport(cid) {
   const tab = currentRptTab[cid] || 'entries';
-  const month = document.getElementById(cid + '-month')?.value || '';
+  const mode = currentRptMode[cid] || 'month';
+  const month = mode === 'month' ? (document.getElementById(cid + '-month')?.value || '') : '';
+  const dateFrom = mode === 'daterange' ? (document.getElementById(cid + '-datefrom')?.value || '') : '';
+  const dateTo = mode === 'daterange' ? (document.getElementById(cid + '-dateto')?.value || '') : '';
   const cust = document.getElementById(cid + '-cust')?.value || '';
   const body = document.getElementById(cid + '-body');
   const stats = document.getElementById(cid + '-stats');
@@ -1633,7 +1679,7 @@ async function loadReport(cid) {
   body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-m)">⏳ กำลังโหลดรายงาน...</div>';
   if (stats) stats.style.display = 'none';
 
-  const params = { type: tab, month, custCode: cust };
+  const params = { type: tab, month, dateFrom, dateTo, filterMode: mode, custCode: cust };
   const data = await apiGet('getReport', params);
   if (!data || data.error) {
     body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ: ' + (data?.error || 'ไม่ทราบสาเหตุ') + '</div>';
@@ -1804,26 +1850,84 @@ async function exportReportPDF(role) {
   const tabNames = { entries:'ยอดที่บันทึก', payments:'การชำระ', customer:'รายลูกค้า', outstanding:'ค้างชำระ' };
   const filename = 'รายงาน-' + (tabNames[tab]||tab) + '-' + new Date().toISOString().slice(0,10) + '.pdf';
 
-  // Create printable wrapper
+  // Create printable wrapper with proper styling
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'padding:20px;font-family:sans-serif;font-size:12px';
-  wrap.innerHTML = '<div style="text-align:center;margin-bottom:16px"><h2 style="margin:0">นำทรัพย์การบัญชี</h2><div style="color:#666;margin-top:4px">รายงาน' + (tabNames[tab]||'') + ' · พิมพ์วันที่ ' + new Date().toLocaleDateString('th-TH') + '</div></div>';
-  // Clone stats if visible
+  wrap.style.cssText = 'width:100%;font-family:"Sarabun",sans-serif;font-size:11px;color:#222;line-height:1.4';
+  
+  // Header
+  wrap.innerHTML = '<div style="text-align:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #333"><h2 style="margin:0;font-size:18px;font-weight:700">นำทรัพย์การบัญชี</h2><div style="color:#666;margin-top:4px;font-size:11px">รายงาน' + (tabNames[tab]||'') + ' · พิมพ์วันที่ ' + new Date().toLocaleDateString('th-TH') + '</div></div>';
+  
+  // Clone stats if visible — style as inline grid
   const statsEl = document.getElementById(cid + '-stats');
   if (statsEl && statsEl.style.display !== 'none') {
-    wrap.appendChild(statsEl.cloneNode(true));
+    const statsClone = statsEl.cloneNode(true);
+    // Flatten stat cards into a simple row
+    statsClone.style.cssText = 'display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap';
+    statsClone.querySelectorAll('.card, [class*="stat"]').forEach(c => {
+      c.style.cssText = 'flex:1;min-width:120px;padding:10px 14px;border:1px solid #ddd;border-radius:6px;background:#fafaf8';
+    });
+    wrap.appendChild(statsClone);
   }
-  wrap.appendChild(body.cloneNode(true));
+  
+  // Clone body and fix table styles for PDF
+  const bodyClone = body.cloneNode(true);
+  
+  // Style all tables for clean PDF output
+  bodyClone.querySelectorAll('table').forEach(tbl => {
+    tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:10px;margin-bottom:8px';
+    tbl.querySelectorAll('th').forEach(th => {
+      th.style.cssText = 'padding:6px 8px;border:1px solid #ccc;background:#f0ece4;font-weight:600;text-align:left;font-size:10px;white-space:nowrap';
+    });
+    tbl.querySelectorAll('td').forEach(td => {
+      td.style.cssText = 'padding:5px 8px;border:1px solid #ddd;font-size:10px;vertical-align:top';
+    });
+    // Alternate row coloring
+    tbl.querySelectorAll('tr').forEach((tr, i) => {
+      if (i > 0 && i % 2 === 0) {
+        tr.querySelectorAll('td').forEach(td => td.style.background = '#fafaf8');
+      }
+    });
+  });
+  
+  // Fix card borders for PDF
+  bodyClone.querySelectorAll('.card').forEach(c => {
+    c.style.cssText = 'border:1px solid #ddd;border-radius:6px;margin-bottom:12px;overflow:hidden';
+  });
+  bodyClone.querySelectorAll('.card-head, .card-t').forEach(h => {
+    h.style.cssText = 'padding:8px 12px;font-weight:600;font-size:12px;background:#f0ece4;border-bottom:1px solid #ddd';
+  });
+  
+  // Add page-break-inside: avoid to key elements
+  bodyClone.querySelectorAll('.card, .hb, [class*="stat"]').forEach(el => {
+    el.style.pageBreakInside = 'avoid';
+  });
+  // Allow table rows to break
+  bodyClone.querySelectorAll('tr').forEach(tr => {
+    tr.style.pageBreakInside = 'avoid';
+  });
+  
+  wrap.appendChild(bodyClone);
 
   const opt = {
-    margin: [10, 10, 10, 10],
+    margin: [8, 8, 8, 8],
     filename: filename,
-    image: { type: 'jpeg', quality: 0.95 },
-    html2canvas: { scale: 2, useCORS: true },
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1100 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    pagebreak: { mode: ['css'], avoid: ['tr', '.card'] }
   };
-  html2pdf().set(opt).from(wrap).save();
+  
+  // Show loading
+  const btn = document.querySelector('[onclick*="exportReportPDF"]');
+  const origText = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '⏳ กำลังสร้าง PDF...'; btn.disabled = true; }
+  
+  try {
+    await html2pdf().set(opt).from(wrap).save();
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด: ' + e.message);
+  }
+  if (btn) { btn.innerHTML = origText; btn.disabled = false; }
 }
 
 // ===== INIT REPORTS ON PAGE NAVIGATE =====
