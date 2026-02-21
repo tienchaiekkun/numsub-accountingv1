@@ -406,7 +406,7 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="top-bar"><div><div class="pg-title">👥 ข้อมูลลูกค้า</div><div class="pg-desc">จัดการข้อมูลลูกค้าและบริการ</div></div><button class="btn btn-p" onclick="openModal('add-cust')">+ เพิ่มลูกค้าใหม่</button></div>
   <div class="content">
     <div class="search-lg"><span class="search-lg-icon">🔍</span><input placeholder="พิมพ์ค้นหา รหัส หรือ ชื่อลูกค้า..." oninput="filterCustTable(this.value,'mgr-cust-tb')" /></div>
-    <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/ด.</th><th>สถานะ</th><th class="text-r">ยอดค้าง</th><th></th></tr></thead>
+    <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/เดือน</th><th>สถานะ</th><th class="text-r">ยอดค้างชำระ</th><th></th></tr></thead>
     <tbody id="mgr-cust-tb">
       <tr><td colspan="7" style="text-align:center;color:var(--text-m);padding:24px">กำลังโหลด...</td></tr>
     </tbody></table></div></div>
@@ -564,7 +564,7 @@ tbody tr:hover{background:var(--accent-l)}
   <div class="content">
     <div class="hb hb-orange mb-16 flex items-c gap-8" style="font-size:13px;color:var(--orange)">⚠️ พนักงานสามารถ <strong>เพิ่ม</strong> ลูกค้าใหม่ได้ แต่ไม่สามารถ <strong>แก้ไข</strong> ข้อมูลที่มีอยู่ (ต้องแจ้งผู้จัดการ)</div>
     <div class="search-lg mb-16"><span class="search-lg-icon">🔍</span><input placeholder="ค้นหาลูกค้า..." oninput="filterCustTable(this.value,'staff-cust-tb')" /></div>
-    <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/ด.</th><th>สถานะ</th><th class="text-r">ยอดค้าง</th></tr></thead>
+    <div class="card"><div class="tbl-w"><table><thead><tr><th>รหัส</th><th>ชื่อลูกค้า</th><th>บริการ</th><th class="text-r">ค่าบริการ/เดือน</th><th>สถานะ</th><th class="text-r">ยอดค้างชำระ</th></tr></thead>
     <tbody id="staff-cust-tb">
       <tr><td colspan="6" style="text-align:center;color:var(--text-m);padding:24px">กำลังโหลด...</td></tr>
     </tbody></table></div></div>
@@ -965,6 +965,38 @@ tbody tr:hover{background:var(--accent-l)}
   <img id="img-viewer-src" src="" />
 </div>
 
+<!-- ===== MODAL: Edit Customer ===== -->
+<div class="modal-bg" id="modal-edit-cust">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">✏️ แก้ไขข้อมูลลูกค้า</div><button class="btn btn-ghost btn-sm" onclick="closeModal('edit-cust')">✕</button></div>
+    <div class="modal-body">
+      <div class="hb hb-purple mb-16 flex items-c gap-12">
+        <span style="font-size:24px">👤</span>
+        <div><div style="font-weight:700;font-size:17px" id="edit-cust-title">—</div><div style="font-size:12px;color:var(--text-s)" id="edit-cust-code">—</div></div>
+      </div>
+      <input type="hidden" id="edit-cust-idx" />
+      <div class="form-grid mb-24">
+        <div class="form-group"><label class="form-label">ชื่อกิจการ</label><input class="form-input" id="edit-cust-name" /></div>
+        <div class="form-group"><label class="form-label">เบอร์โทร</label><input class="form-input" id="edit-cust-phone" /></div>
+        <div class="form-group full"><label class="form-label">ที่อยู่</label><input class="form-input" id="edit-cust-address" /></div>
+        <div class="form-group"><label class="form-label">เลขผู้เสียภาษี</label><input class="form-input mono" id="edit-cust-taxid" /></div>
+        <div class="form-group"><label class="form-label">สถานะ</label><select class="form-select" id="edit-cust-status"><option value="ปกติ">ปกติ</option><option value="ระงับ">ระงับ</option></select></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text-s);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">ค่าบริการเริ่มต้น (ต่อเดือน)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ค่าทำบัญชี</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-accounting" /></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ภพ 30</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-vat" /></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ภงด 3,53</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-wht" /></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ภธ 40</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-sbt" /></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ภงด 90</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-pnd90" /></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--rs)"><span style="font-size:13px;font-weight:500;flex:1">ค่าสอบ บช</span><input style="width:100px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right" id="edit-cust-audit" /></div>
+      </div>
+      <div class="hb hb-orange mt-16" style="font-size:12px;color:var(--orange)">💡 ค่าบริการในนี้เป็น "อัตราเริ่มต้น" สำหรับอ้างอิงเท่านั้น — ยอดจริงบันทึกผ่านหน้า "บันทึกยอดประจำเดือน" แยกกัน</div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-o" onclick="closeModal('edit-cust')">ยกเลิก</button><button class="btn btn-p" onclick="saveEditCust()">💾 บันทึก</button></div>
+  </div>
+</div>
+
 <script>
 // ===================================================================
 // 🔧 CONFIG — ใส่ URL ของ Apps Script Web App ตรงนี้
@@ -1140,12 +1172,15 @@ function renderCustomerTables() {
     return;
   }
   let mH='', sH='';
-  allCustomers.forEach(c => {
-    const sc = [c.accounting,c.vat,c.wht,c.sbt,c.pnd90,c.audit].filter(v=>v>0).length;
-    const mo = (c.accounting||0)+(c.vat||0)+(c.wht||0)+(c.sbt||0)+(c.pnd90||0);
+  allCustomers.forEach((c, idx) => {
+    const sc = c.svcCount || 0;
+    const mo = c.monthlyRate || 0;
     const sb = statusBadge(c.status);
-    mH += '<tr><td class="mono">'+c.code+'</td><td><strong>'+c.name+'</strong></td><td><span class="badge b-blue">'+sc+' บริการ</span></td><td class="text-r mono">'+fmtBaht(mo)+'</td><td>'+sb+'</td><td class="text-r mono">—</td><td class="text-r"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>';
-    sH += '<tr><td class="mono">'+c.code+'</td><td><strong>'+c.name+'</strong></td><td><span class="badge b-blue">'+sc+' บริการ</span></td><td class="text-r mono">'+fmtBaht(mo)+'</td><td>'+sb+'</td><td class="text-r mono">—</td></tr>';
+    const ow = c.outstanding || 0;
+    const owHtml = ow > 0 ? '<span style="color:var(--red);font-weight:600">' + fmtBaht(ow) + '</span>' + (c.monthsOwed ? ' <span class="badge b-red" style="font-size:10px">' + c.monthsOwed + ' ด.</span>' : '') : '<span style="color:var(--green)">—</span>';
+    const scBadge = sc > 0 ? '<span class="badge b-blue">' + sc + ' บริการ</span>' : '<span class="badge" style="background:var(--surface-alt);color:var(--text-m)">0 บริการ</span>';
+    mH += '<tr><td class="mono">' + esc(c.code) + '</td><td><strong>' + esc(c.name) + '</strong></td><td>' + scBadge + '</td><td class="text-r mono">' + (mo > 0 ? fmtBaht(mo) : '<span style="color:var(--text-m)">—</span>') + '</td><td>' + sb + '</td><td class="text-r">' + owHtml + '</td><td class="text-r"><button class="btn btn-ghost btn-sm" onclick="openEditCust(' + idx + ')">✏️</button></td></tr>';
+    sH += '<tr><td class="mono">' + esc(c.code) + '</td><td><strong>' + esc(c.name) + '</strong></td><td>' + scBadge + '</td><td class="text-r mono">' + (mo > 0 ? fmtBaht(mo) : '<span style="color:var(--text-m)">—</span>') + '</td><td>' + sb + '</td><td class="text-r">' + owHtml + '</td></tr>';
   });
   if(mgrTb) mgrTb.innerHTML=mH;
   if(stfTb) stfTb.innerHTML=sH;
@@ -1956,6 +1991,56 @@ function selectInvCust(code,name){invCustCode=code;invCustName=name;document.get
 function backToInvSelect(){document.getElementById('inv-step-select').style.display='block';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-cust-search').value='';filterInvCust('');setInvFlow(1)}
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
 function generateInvPreview(){const items=invItemsCache||[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it.amount;const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it.serviceLabel+'</td><td>'+it.month+'</td><td class="text-r mono">'+fmtBaht(it.amount)+'</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t);document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
+
+// ===== EDIT CUSTOMER =====
+function openEditCust(idx) {
+  const c = allCustomers[idx];
+  if (!c) { alert('ไม่พบข้อมูลลูกค้า'); return; }
+  document.getElementById('edit-cust-idx').value = idx;
+  document.getElementById('edit-cust-title').textContent = c.name;
+  document.getElementById('edit-cust-code').textContent = 'รหัส: ' + c.code;
+  document.getElementById('edit-cust-name').value = c.name || '';
+  document.getElementById('edit-cust-phone').value = c.phone || '';
+  document.getElementById('edit-cust-address').value = c.address || '';
+  document.getElementById('edit-cust-taxid').value = c.taxId || '';
+  document.getElementById('edit-cust-status').value = c.status || 'ปกติ';
+  document.getElementById('edit-cust-accounting').value = c.accounting || '';
+  document.getElementById('edit-cust-vat').value = c.vat || '';
+  document.getElementById('edit-cust-wht').value = c.wht || '';
+  document.getElementById('edit-cust-sbt').value = c.sbt || '';
+  document.getElementById('edit-cust-pnd90').value = c.pnd90 || '';
+  document.getElementById('edit-cust-audit').value = c.audit || '';
+  openModal('edit-cust');
+}
+
+async function saveEditCust() {
+  const idx = parseInt(document.getElementById('edit-cust-idx').value);
+  const c = allCustomers[idx];
+  if (!c || !c._rowIndex) { alert('ไม่พบข้อมูลลูกค้า'); return; }
+  const data = {
+    rowIndex: c._rowIndex,
+    name: document.getElementById('edit-cust-name').value.trim(),
+    phone: document.getElementById('edit-cust-phone').value.trim(),
+    address: document.getElementById('edit-cust-address').value.trim(),
+    taxId: document.getElementById('edit-cust-taxid').value.trim(),
+    status: document.getElementById('edit-cust-status').value,
+    accounting: parseFloat(document.getElementById('edit-cust-accounting').value) || 0,
+    vat: parseFloat(document.getElementById('edit-cust-vat').value) || 0,
+    wht: parseFloat(document.getElementById('edit-cust-wht').value) || 0,
+    sbt: parseFloat(document.getElementById('edit-cust-sbt').value) || 0,
+    pnd90: parseFloat(document.getElementById('edit-cust-pnd90').value) || 0,
+    audit: parseFloat(document.getElementById('edit-cust-audit').value) || 0
+  };
+  if (!data.name) { alert('กรุณากรอกชื่อกิจการ'); return; }
+  const r = await apiPost('updateCustomer', data);
+  if (r && r.success) {
+    alert('✅ ' + r.message);
+    closeModal('edit-cust');
+    await loadCustomers(); // Reload to show updated data
+  } else {
+    alert('❌ ' + (r?.error || 'ไม่สามารถบันทึกได้'));
+  }
+}
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',function(){const td=new Date().toISOString().split('T')[0];document.querySelectorAll('input[type="date"]').forEach(i=>{if(i.value)i.value=td})});
