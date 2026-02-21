@@ -1289,8 +1289,9 @@ async function loadCollectItems(custCode, custName) {
     if(list) list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ</div>';
     return;
   }
-  // Only unpaid items
-  const unpaid = data.filter(it => !it.paid);
+  // Separate: unpaid (selectable) vs pending (disabled)
+  const unpaid = data.filter(it => !it.paid && !it.pending);
+  const pending = data.filter(it => it.pending);
   if (!unpaid.length) {
     if(list) list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--green)"><div style="font-size:32px;margin-bottom:8px">✅</div>ไม่มียอดค้างชำระ</div>';
     if(sub) sub.textContent = 'ไม่มีรายการค้างชำระ';
@@ -1326,8 +1327,14 @@ async function loadCollectItems(custCode, custName) {
     html += '</div>';
   });
   
+  // Add pending section
+  if (pending.length) {
+    const pendTotal = pending.reduce((s,it) => s + it.amount, 0);
+    html += '<div style="padding:12px 20px;background:var(--orange-l,#fff8e6);border-top:2px solid var(--orange);font-size:13px;color:var(--orange)"><strong>⏳ ' + pending.length + ' รายการรออนุมัติ (' + fmtBaht(pendTotal) + ')</strong> — จะแสดงอีกครั้งหากถูกปฏิเสธ</div>';
+  }
+  
   if(list) list.innerHTML = html;
-  if(sub) sub.textContent = unpaid.length + ' รายการค้างชำระ · ' + months.length + ' เดือน · รวม ' + fmtBaht(totalAll);
+  if(sub) sub.textContent = unpaid.length + ' รายการค้างชำระ' + (pending.length ? ' + ' + pending.length + ' รออนุมัติ' : '') + ' · ' + months.length + ' เดือน · รวม ' + fmtBaht(totalAll);
   const ct = document.getElementById('collect-total');
   if(ct) ct.textContent = fmtBaht(totalAll);
   updatePaySummary();
@@ -1784,32 +1791,41 @@ async function loadApprove() {
   }
 }
 
+// Store pending payments data for approve actions
+let approveData = {};
 function renderApproveCard(p, type) {
   const colors = { pending: 'var(--orange)', approved: 'var(--green)', rejected: 'var(--red)' };
   const labels = { pending: 'รออนุมัติ', approved: 'อนุมัติแล้ว', rejected: 'ไม่อนุมัติ' };
   const badgeClass = { pending: 'b-orange', approved: 'b-green', rejected: 'b-red' };
+  const uid = 'ap-' + (p.payNo||'').replace(/[^a-zA-Z0-9-]/g,'');
+  if (type === 'pending') approveData[uid] = p;
   let html = '<div class="card mb-12" style="border-left:4px solid ' + colors[type] + '">';
   html += '<div class="card-body" style="padding:16px 20px"><div class="flex items-c jc-b" style="flex-wrap:wrap;gap:8px">';
-  html += '<div><div style="font-weight:700;font-size:15px">' + (p.custName||'—') + ' <span class="mono" style="font-size:12px;color:var(--text-m)">' + (p.custCode||'') + '</span></div>';
-  html += '<div style="font-size:13px;color:var(--text-m);margin-top:2px">' + (p.payNo||'—') + ' · ' + (p.channel||'—') + (p.bank && p.bank !== '—' ? ' · ' + p.bank : '') + ' · ' + (p.date||'—') + ' · ' + (p.staff||'—') + '</div></div>';
+  html += '<div><div style="font-weight:700;font-size:15px">' + esc(p.custName||'—') + ' <span class="mono" style="font-size:12px;color:var(--text-m)">' + esc(p.custCode||'') + '</span></div>';
+  html += '<div style="font-size:13px;color:var(--text-m);margin-top:2px">' + esc(p.payNo||'—') + ' · ' + esc(p.channel||'—') + (p.bank && p.bank !== '—' ? ' · ' + esc(p.bank) : '') + ' · ' + esc(p.date||'—') + ' · ' + esc(p.staff||'—') + '</div></div>';
   html += '<div class="flex items-c gap-12"><div class="mono" style="font-size:20px;font-weight:700;color:' + colors[type] + '">' + fmtBaht(p.amount) + '</div>';
   html += '<span class="badge ' + badgeClass[type] + '"><span class="dot"></span>' + labels[type] + '</span></div></div>';
-  // Action buttons for pending
   if (type === 'pending') {
     html += '<div class="flex gap-8" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">';
-    html += '<button class="btn btn-p btn-sm" onclick="doApprove(' + p._rowIndex + ',\'' + (p.payNo||'') + '\',\'' + (p.invNo||'') + '\',\'' + (p.custCode||'') + '\',' + (p.amount||0) + ',\'' + (p.channel||'') + '\',\'' + (p.bank||'') + '\')">✅ อนุมัติ</button>';
-    html += '<button class="btn btn-danger btn-sm" onclick="doReject(' + p._rowIndex + ',\'' + (p.payNo||'') + '\')">❌ ไม่อนุมัติ</button>';
+    html += '<button class="btn btn-p btn-sm" onclick="doApprove(\'' + uid + '\')">✅ อนุมัติ</button>';
+    html += '<button class="btn btn-danger btn-sm" onclick="doReject(\'' + uid + '\')">❌ ไม่อนุมัติ</button>';
     html += '</div>';
   }
+  if (type === 'approved' && p.approvedDate) html += '<div style="margin-top:8px;font-size:11px;color:var(--text-m)">อนุมัติ: ' + esc(p.approvedDate) + (p.approvedBy ? ' โดย ' + esc(p.approvedBy) : '') + '</div>';
   html += '</div></div>';
   return html;
 }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
-async function doApprove(rowIndex, payNo, invNo, custCode, amount, channel, bank) {
-  if (!confirm('ยืนยันอนุมัติ?\n\n' + payNo + ' · ' + fmtBaht(amount))) return;
+async function doApprove(uid) {
+  const p = approveData[uid];
+  if (!p) { alert('ไม่พบข้อมูล'); return; }
+  if (!confirm('ยืนยันอนุมัติ?\n\n' + p.payNo + ' · ' + p.custName + ' · ' + fmtBaht(p.amount))) return;
   const name = currentUser ? currentUser.name : 'ผู้จัดการ';
   const r = await apiPost('approvePayment', {
-    rowIndex, payNo, invNo, custCode, amount, channel, bank, approvedBy: name
+    rowIndex: p._rowIndex, payNo: p.payNo, invNo: p.invNo,
+    custCode: p.custCode, custName: p.custName,
+    amount: p.amount, channel: p.channel, bank: p.bank, approvedBy: name
   });
   if (r && r.success) {
     alert('✅ ' + r.message);
@@ -1820,10 +1836,12 @@ async function doApprove(rowIndex, payNo, invNo, custCode, amount, channel, bank
   }
 }
 
-async function doReject(rowIndex, payNo) {
+async function doReject(uid) {
+  const p = approveData[uid];
+  if (!p) { alert('ไม่พบข้อมูล'); return; }
   const reason = prompt('เหตุผลที่ไม่อนุมัติ:');
   if (reason === null) return;
-  const r = await apiPost('rejectPayment', { rowIndex, reason: reason || 'ปฏิเสธโดยผู้จัดการ' });
+  const r = await apiPost('rejectPayment', { rowIndex: p._rowIndex, reason: reason || 'ปฏิเสธโดยผู้จัดการ' });
   if (r && r.success) {
     alert('✅ ' + r.message);
     loadApprove();
@@ -1897,40 +1915,47 @@ async function loadStaffInvoices() {
   }
 }
 
-// ===== LOAD: Staff Invoice Detail (when customer selected) =====
-async function loadInvDetail(custCode) {
+// ===== LOAD: Invoice Items (unpaid items for invoice) =====
+let invItemsCache = [];
+async function loadInvItems(custCode, custName) {
   const tb = document.getElementById('inv-detail-tbody');
-  if (!tb) return;
-  tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</td></tr>';
-
-  const data = await apiGet('getEntries', { custCode });
-  if (!data || data.error || !data.length) {
-    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-m)">ยังไม่มียอดสำหรับลูกค้านี้</td></tr>';
-    return;
-  }
-  // Filter unpaid
-  const unpaid = data.filter(e => e.status !== 'ชำระแล้ว' && e.code === custCode);
-  if (!unpaid.length) {
-    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--green)">✅ ไม่มียอดค้างชำระ</td></tr>';
-    return;
-  }
-  let total = 0;
-  tb.innerHTML = unpaid.map(e => {
-    total += e.total || 0;
-    return '<tr><td>' + (e.month||'') + '</td><td>' + (e.date||'') + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(e.total) + '</td><td>' + statusBadge(e.status) + '</td><td><input type="checkbox" class="inv-check" data-amt="' + (e.total||0) + '" data-month="' + (e.month||'') + '" checked /></td></tr>';
-  }).join('');
   const totalEl = document.getElementById('inv-list-total');
+  const infoEl = document.getElementById('inv-sel-info');
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-m)">⏳ กำลังโหลด...</td></tr>';
+
+  const data = await apiGet('getUnpaidItems', { custCode });
+  if (!data || data.error) {
+    tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--red)">❌ โหลดข้อมูลไม่สำเร็จ</td></tr>';
+    return;
+  }
+  const unpaid = data.filter(it => !it.paid);
+  invItemsCache = unpaid; // Store for generateInvPreview (include pending too - they're still outstanding)
+  
+  if (!unpaid.length) {
+    tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--green)">✅ ไม่มียอดค้างชำระ</td></tr>';
+    if (totalEl) totalEl.textContent = '฿0';
+    if (infoEl) infoEl.textContent = 'ไม่มีรายการค้างชำระ';
+    return;
+  }
+  let total = 0, num = 0;
+  tb.innerHTML = unpaid.map(it => {
+    num++; total += it.amount;
+    const badge = it.pending ? '<span class="badge b-orange" style="font-size:10px"><span class="dot"></span>รออนุมัติ</span>' : '';
+    return '<tr><td>' + num + '</td><td>' + it.month + '</td><td>' + it.serviceLabel + ' ' + badge + '</td><td class="text-r mono" style="font-weight:600">' + fmtBaht(it.amount) + '</td></tr>';
+  }).join('');
   if (totalEl) totalEl.textContent = fmtBaht(total);
+  if (infoEl) infoEl.textContent = unpaid.length + ' รายการ · ' + [...new Set(unpaid.map(it=>it.month))].length + ' เดือน · รวม ' + fmtBaht(total);
 }
 
 // ===== INVOICE FLOW =====
 let invCustCode='',invCustName='';
 function setInvFlow(s){const f=[document.getElementById('inv-flow-1'),document.getElementById('inv-flow-2'),document.getElementById('inv-flow-3')];if(!f[0])return;f.forEach(x=>x.className='flow-s');if(s>=1)f[0].className=s===1?'flow-s active':'flow-s done';if(s>=2)f[1].className=s===2?'flow-s active':'flow-s done';if(s>=3)f[2].className='flow-s active'}
 function filterInvCust(v){document.querySelectorAll('.inv-cust-row').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(v.toLowerCase())?'':'none'})}
-function selectInvCust(code,name){invCustCode=code;invCustName=name;document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-sel-name').textContent=code+' — '+name;document.getElementById('inv-sel-info').textContent='รายการค้างชำระทั้งหมด';setInvFlow(2)}
+function selectInvCust(code,name){invCustCode=code;invCustName=name;document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-sel-name').textContent=code+' — '+name;document.getElementById('inv-sel-info').textContent='กำลังโหลดรายการค้างชำระ...';setInvFlow(2);loadInvItems(code,name)}
 function backToInvSelect(){document.getElementById('inv-step-select').style.display='block';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-cust-search').value='';filterInvCust('');setInvFlow(1)}
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
-function generateInvPreview(){const items=[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it[2];const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it[0]+'</td><td>'+it[1]+'</td><td class="text-r mono">'+it[2].toLocaleString()+'.00</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t)+'.00';document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
+function generateInvPreview(){const items=invItemsCache||[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it.amount;const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it.serviceLabel+'</td><td>'+it.month+'</td><td class="text-r mono">'+fmtBaht(it.amount)+'</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t);document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',function(){const td=new Date().toISOString().split('T')[0];document.querySelectorAll('input[type="date"]').forEach(i=>{if(i.value)i.value=td})});
