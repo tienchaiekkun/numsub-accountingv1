@@ -493,9 +493,9 @@ tbody tr:hover{background:var(--accent-l)}
         <div class="svc-row-lg" data-svc="other"><div class="svc-name-lg">อื่นๆ</div><div class="svc-type-tag">รายเดือน</div><input class="form-input" style="flex:1;font-size:16px;padding:10px 14px" placeholder="ระบุรายละเอียด..." /><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
 
         <div style="font-size:15px;font-weight:700;color:var(--text-s);margin:24px 0 16px">📆 บริการรายปี</div>
-        <div class="svc-row-lg" data-svc="audit"><div class="svc-name-lg">ค่าสอบ บช</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd51"><div class="svc-name-lg">ภงด 51</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
-        <div class="svc-row-lg" data-svc="pnd50"><div class="svc-name-lg">ภงด 50</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="audit"><div class="svc-name-lg">ค่าสอบ บช</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd51"><div class="svc-name-lg">ภงด 51</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
+        <div class="svc-row-lg" data-svc="pnd50"><div class="svc-name-lg">ภงด 50</div><div class="svc-type-tag">รายปี</div><div style="flex:1"></div><div class="svc-prev" style="display:none"></div><input class="svc-input-lg" placeholder="0" inputmode="numeric" oninput="updateEntryTotal()" /></div>
 
         <!-- Total LARGE -->
         <div style="margin-top:24px;padding:24px;background:var(--surface-alt);border-radius:var(--r);border:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">
@@ -654,7 +654,7 @@ tbody tr:hover{background:var(--accent-l)}
           <div style="text-align:right"><div class="inv-ml">วันที่ออก</div><div style="font-weight:600" id="inv-print-date">—</div><div class="inv-ml" style="margin-top:6px">กำหนดชำระ</div><div style="font-weight:600" id="inv-print-due">—</div></div>
         </div>
         <div class="inv-grid">
-          <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px" id="inv-print-cust">—</div><div style="font-size:12px;color:var(--text-s)" id="inv-print-code">—</div></div>
+          <div><div class="inv-ml">ออกให้</div><div style="font-weight:600;font-size:15px" id="inv-print-cust">—</div><div style="font-size:12px;color:var(--text-s)" id="inv-print-code">—</div><div style="font-size:11px;color:var(--text-s);margin-top:2px" id="inv-print-addr"></div><div style="font-size:11px;color:var(--text-s)" id="inv-print-taxid"></div></div>
           <div><div class="inv-ml">ออกโดย</div><div style="font-weight:600;font-size:15px">นำทรัพย์การบัญชี</div></div>
         </div>
 
@@ -1447,7 +1447,7 @@ async function selectCustEntry(code, name) {
       // EDIT MODE: load existing data
       window._entryEditMode = true;
       document.getElementById('sel-cust-sub').innerHTML = '✏️ แก้ไขยอด: <strong>' + month + '</strong> <span class="badge b-blue">มีข้อมูลแล้ว</span>';
-      const keys = ['accounting','vat','wht','sbt','pnd90','pnd94','audit','pnd51','pnd50','other'];
+      const keys = ['accounting','vat','wht','sbt','pnd90','pnd94','other','audit','pnd51','pnd50'];
       const rows = document.querySelectorAll('#entry-area .svc-row-lg');
       keys.forEach((k,i) => {
         if (!rows[i]) return;
@@ -1484,7 +1484,7 @@ function showPrevBanner(prev){
   document.getElementById('prev-month-label').textContent=prev.month;
   document.getElementById('prev-month-total').textContent=fmtBaht(prev.total);
   window._prevData=prev.amounts;
-  const keys=['accounting','vat','wht','sbt','pnd90','pnd94','other'];
+  const keys=['accounting','vat','wht','sbt','pnd90','pnd94','other','audit','pnd51','pnd50'];
   const rows=document.querySelectorAll('#entry-area .svc-row-lg');
   keys.forEach((k,i)=>{
     if(!rows[i])return; const pd=rows[i].querySelector('.svc-prev'), v=prev.amounts[k]||0;
@@ -1503,7 +1503,7 @@ function showNewBanner(){
 
 function fillAllPrev(){
   if(!window._prevData)return;
-  const keys=['accounting','vat','wht','sbt','pnd90','pnd94','other'];
+  const keys=['accounting','vat','wht','sbt','pnd90','pnd94','other','audit','pnd51','pnd50'];
   const rows=document.querySelectorAll('#entry-area .svc-row-lg');
   keys.forEach((k,i)=>{if(rows[i]&&window._prevData[k]>0){rows[i].querySelector('.svc-input-lg').value=window._prevData[k].toLocaleString();rows[i].classList.add('has-val')}});
   document.getElementById('prev-month-banner').style.display='none';
@@ -1528,6 +1528,9 @@ async function saveEntry(){
   const keys=['accounting','vat','wht','sbt','pnd90','pnd94','other','audit','pnd51','pnd50'];
   let t=0,c=0;const amounts={};
   inputs.forEach((inp,i)=>{const v=parseFloat(inp.value.replace(/,/g,''))||0;if(v>0){t+=v;c++}if(keys[i])amounts[keys[i]]=v});
+  // Get otherDesc from the description text input inside the 'other' row
+  const otherRow=document.querySelector('#entry-area .svc-row-lg[data-svc="other"]');
+  if(otherRow){const descInp=otherRow.querySelector('.form-input');if(descInp)amounts.otherDesc=descInp.value.trim();}
   if(c===0){alert('⚠️ กรุณากรอกยอดอย่างน้อย 1 รายการ');return}
   if(!window._entryCust){alert('⚠️ กรุณาเลือกลูกค้าก่อน');return}
   const cu=window._entryCust;
@@ -2200,14 +2203,79 @@ function filterInvCust(v){document.querySelectorAll('.inv-cust-row').forEach(r=>
 function selectInvCust(code,name){invCustCode=code;invCustName=name;document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-sel-name').textContent=code+' — '+name;document.getElementById('inv-sel-info').textContent='กำลังโหลดรายการค้างชำระ...';setInvFlow(2);loadInvItems(code,name)}
 function backToInvSelect(){document.getElementById('inv-step-select').style.display='block';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='none';document.getElementById('inv-cust-search').value='';filterInvCust('');setInvFlow(1)}
 function backToInvList(){document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='block';document.getElementById('inv-step-print').style.display='none';setInvFlow(2)}
-function generateInvPreview(){const items=invItemsCache||[];const tb=document.getElementById('inv-print-body');tb.innerHTML='';let t=0;items.forEach((it,i)=>{t+=it.amount;const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+it.serviceLabel+'</td><td>'+it.month+'</td><td class="text-r mono">'+fmtBaht(it.amount)+'</td>';tb.appendChild(tr)});document.getElementById('inv-print-total').textContent=fmtBaht(t);document.getElementById('inv-print-total-text').textContent='('+items.length+' รายการ)';document.getElementById('inv-print-cust').textContent=invCustName;document.getElementById('inv-print-code').textContent='รหัส: '+invCustCode;document.getElementById('inv-print-no').textContent='INV-'+(new Date().getFullYear()+543)+'-'+String(Math.floor(Math.random()*900+100)).padStart(4,'0');
-// Bank info from settings
-const bankName=appSettings['ธนาคาร']||appSettings['ชื่อธนาคาร']||'';const acctNo=appSettings['เลขที่บัญชี']||appSettings['เลขบัญชี']||'';const acctName=appSettings['ชื่อบัญชี']||appSettings['ชื่อสำนักงาน']||'นำทรัพย์การบัญชี';const el1=document.getElementById('inv-qr-acct-name');if(el1)el1.textContent='บัญชี '+acctName;const el2=document.getElementById('inv-bank-info');if(el2)el2.textContent=(bankName?'ธ.'+bankName+' ':'')+(acctNo||'');const el3=document.getElementById('inv-bank-name');if(el3)el3.textContent='ชื่อ: '+acctName;
-// Date
-const td=new Date();const thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const dateStr=td.getDate()+' '+thM[td.getMonth()]+' '+(td.getFullYear()+543);document.getElementById('inv-print-date').textContent=dateStr;
-// Set due date (15 days from today)
-const due=new Date(td);due.setDate(due.getDate()+15);const dueStr=due.getDate()+' '+thM[due.getMonth()]+' '+(due.getFullYear()+543);document.getElementById('inv-print-due').textContent=dueStr;
-document.getElementById('inv-step-select').style.display='none';document.getElementById('inv-step-list').style.display='none';document.getElementById('inv-step-print').style.display='block';setInvFlow(3);window.scrollTo({top:0,behavior:'smooth'})}
+async function generateInvPreview(){
+  const items = invItemsCache || [];
+  if (!items.length) { alert('ไม่มีรายการค้างชำระ'); return; }
+  
+  // Calculate total + due date
+  let t = 0;
+  items.forEach(it => { t += it.amount; });
+  const td = new Date();
+  const due = new Date(td); due.setDate(due.getDate() + 15);
+  const thM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const dueStr = due.getDate() + ' ' + thM[due.getMonth()] + ' ' + (due.getFullYear() + 543);
+  const dueISO = due.toISOString().split('T')[0];
+  
+  // ── Save invoice to backend (get real running number) ──
+  const staffName = currentUser ? currentUser.name : '';
+  const result = await apiPost('saveInvoice', {
+    custCode: invCustCode,
+    custName: invCustName,
+    dueDate: dueISO,
+    itemCount: items.length,
+    total: t,
+    staff: staffName
+  });
+  
+  let invNo = '—';
+  if (result && result.success && result.invNo) {
+    invNo = result.invNo;
+  } else {
+    alert('⚠️ ไม่สามารถบันทึกใบแจ้งหนี้ได้: ' + (result?.error || 'ลองใหม่อีกครั้ง'));
+    return;
+  }
+  
+  // ── Populate preview ──
+  const tb = document.getElementById('inv-print-body');
+  tb.innerHTML = '';
+  items.forEach((it, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + (i+1) + '</td><td>' + it.serviceLabel + '</td><td>' + it.month + '</td><td class="text-r mono">' + fmtBaht(it.amount) + '</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('inv-print-total').textContent = fmtBaht(t);
+  document.getElementById('inv-print-total-text').textContent = '(' + items.length + ' รายการ)';
+  document.getElementById('inv-print-cust').textContent = invCustName;
+  document.getElementById('inv-print-code').textContent = 'รหัส: ' + invCustCode;
+  document.getElementById('inv-print-no').textContent = invNo;
+  
+  // Customer address + taxId (from allCustomers cache)
+  const custInfo = allCustomers.find(c => c.code === invCustCode);
+  const addrEl = document.getElementById('inv-print-addr');
+  const taxEl = document.getElementById('inv-print-taxid');
+  if (addrEl) addrEl.textContent = custInfo && custInfo.address ? custInfo.address : '';
+  if (taxEl) taxEl.textContent = custInfo && custInfo.taxId ? 'เลขผู้เสียภาษี: ' + custInfo.taxId : '';
+  
+  // Bank info from settings
+  const bankName = appSettings['ธนาคาร'] || appSettings['ชื่อธนาคาร'] || '';
+  const acctNo = appSettings['เลขที่บัญชี'] || appSettings['เลขบัญชี'] || '';
+  const acctName = appSettings['ชื่อบัญชี'] || appSettings['ชื่อสำนักงาน'] || 'นำทรัพย์การบัญชี';
+  const el1 = document.getElementById('inv-qr-acct-name'); if (el1) el1.textContent = 'บัญชี ' + acctName;
+  const el2 = document.getElementById('inv-bank-info'); if (el2) el2.textContent = (bankName ? 'ธ.' + bankName + ' ' : '') + (acctNo || '');
+  const el3 = document.getElementById('inv-bank-name'); if (el3) el3.textContent = 'ชื่อ: ' + acctName;
+  
+  // Date
+  const dateStr = td.getDate() + ' ' + thM[td.getMonth()] + ' ' + (td.getFullYear() + 543);
+  document.getElementById('inv-print-date').textContent = dateStr;
+  document.getElementById('inv-print-due').textContent = dueStr;
+  
+  // Show preview
+  document.getElementById('inv-step-select').style.display = 'none';
+  document.getElementById('inv-step-list').style.display = 'none';
+  document.getElementById('inv-step-print').style.display = 'block';
+  setInvFlow(3);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 // ===== EDIT CUSTOMER =====
 function openEditCust(idx) {
