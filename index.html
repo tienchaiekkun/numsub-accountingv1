@@ -1842,7 +1842,6 @@ async function exportReportPDF(role) {
     alert('กรุณาโหลดรายงานก่อนดาวน์โหลด PDF');
     return;
   }
-  // Load html2pdf if not loaded
   if (!window.html2pdf) {
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
@@ -1853,78 +1852,93 @@ async function exportReportPDF(role) {
   const tabNames = { entries:'ยอดที่บันทึก', payments:'การชำระ', customer:'รายลูกค้า', outstanding:'ค้างชำระ' };
   const filename = 'รายงาน-' + (tabNames[tab]||tab) + '-' + new Date().toISOString().slice(0,10) + '.pdf';
 
-  // Create printable wrapper with proper styling
+  // ── Build PDF-optimized layout ──
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'width:100%;font-family:"Sarabun",sans-serif;font-size:11px;color:#222;line-height:1.4';
-  
-  // Header
-  wrap.innerHTML = '<div style="text-align:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #333"><h2 style="margin:0;font-size:18px;font-weight:700">นำทรัพย์การบัญชี</h2><div style="color:#666;margin-top:4px;font-size:11px">รายงาน' + (tabNames[tab]||'') + ' · พิมพ์วันที่ ' + new Date().toLocaleDateString('th-TH') + '</div></div>';
-  
-  // Clone stats if visible — style as inline grid
+  wrap.style.cssText = 'width:277mm;font-family:"Sarabun",sans-serif;color:#222;line-height:1.3';
+
+  // ── Compact one-line header ──
+  wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;border-bottom:2px solid #3d2e1f;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:14px;font-weight:700;color:#3d2e1f">นำทรัพย์การบัญชี</span><span style="color:#ccc">|</span><span style="font-size:11px;font-weight:600">รายงาน' + (tabNames[tab]||'') + '</span></div><div style="font-size:9px;color:#888">พิมพ์: ' + new Date().toLocaleDateString('th-TH') + '</div></div>';
+
+  // ── Compact inline stats (single row, small) ──
   const statsEl = document.getElementById(cid + '-stats');
   if (statsEl && statsEl.style.display !== 'none') {
-    const statsClone = statsEl.cloneNode(true);
-    // Flatten stat cards into a simple row
-    statsClone.style.cssText = 'display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap';
-    statsClone.querySelectorAll('.card, [class*="stat"]').forEach(c => {
-      c.style.cssText = 'flex:1;min-width:120px;padding:10px 14px;border:1px solid #ddd;border-radius:6px;background:#fafaf8';
-    });
-    wrap.appendChild(statsClone);
+    const statCards = statsEl.querySelectorAll('.stat');
+    if (statCards.length > 0) {
+      let sh = '<div style="display:flex;gap:6px;margin-bottom:10px">';
+      statCards.forEach(sc => {
+        const label = sc.querySelector('.stat-label')?.textContent || '';
+        const val = sc.querySelector('.stat-val')?.textContent || '';
+        const vc = sc.querySelector('.stat-val')?.style?.color || '#333';
+        sh += '<div style="flex:1;padding:4px 8px;border:1px solid #ddd;border-radius:3px;background:#fafaf8"><div style="font-size:7px;color:#888;text-transform:uppercase">' + label + '</div><div style="font-size:12px;font-weight:700;color:' + vc + '">' + val + '</div></div>';
+      });
+      sh += '</div>';
+      wrap.innerHTML += sh;
+    }
   }
-  
-  // Clone body and fix table styles for PDF
-  const bodyClone = body.cloneNode(true);
-  
-  // Style all tables for clean PDF output
-  bodyClone.querySelectorAll('table').forEach(tbl => {
-    tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:10px;margin-bottom:8px';
+
+  // ── Clone & restyle body for PDF ──
+  const bc = body.cloneNode(true);
+
+  // Remove buttons, open details
+  bc.querySelectorAll('button,.btn').forEach(el => el.remove());
+  bc.querySelectorAll('details').forEach(d => { d.open = true; d.style.padding = '2px 6px'; });
+
+  // Tables — professional style
+  bc.querySelectorAll('table').forEach(tbl => {
+    tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:9px;margin-bottom:4px';
     tbl.querySelectorAll('th').forEach(th => {
-      th.style.cssText = 'padding:6px 8px;border:1px solid #ccc;background:#f0ece4;font-weight:600;text-align:left;font-size:10px;white-space:nowrap';
+      th.style.cssText = 'padding:4px 6px;border:1px solid #999;background:#3d2e1f;color:white;font-weight:600;font-size:9px;white-space:nowrap';
     });
     tbl.querySelectorAll('td').forEach(td => {
-      td.style.cssText = 'padding:5px 8px;border:1px solid #ddd;font-size:10px;vertical-align:top';
+      td.style.cssText = 'padding:3px 6px;border:1px solid #ddd;font-size:9px;vertical-align:top';
     });
-    // Alternate row coloring
-    tbl.querySelectorAll('tr').forEach((tr, i) => {
-      if (i > 0 && i % 2 === 0) {
-        tr.querySelectorAll('td').forEach(td => td.style.background = '#fafaf8');
-      }
+    let ri = 0;
+    tbl.querySelectorAll('tbody tr').forEach(tr => {
+      if (ri % 2 === 1) tr.querySelectorAll('td').forEach(td => { td.style.background = '#f9f7f4'; });
+      ri++;
+    });
+    tbl.querySelectorAll('tfoot tr').forEach(tr => {
+      tr.querySelectorAll('td').forEach(td => {
+        td.style.cssText = 'padding:4px 6px;border:1px solid #999;font-size:9px;font-weight:700;background:#f0ece4';
+      });
     });
   });
-  
-  // Fix card borders for PDF
-  bodyClone.querySelectorAll('.card').forEach(c => {
-    c.style.cssText = 'border:1px solid #ddd;border-radius:6px;margin-bottom:12px;overflow:hidden';
+
+  // Cards — minimal for PDF (NO page-break-inside:avoid on cards!)
+  bc.querySelectorAll('.card').forEach(c => {
+    c.style.cssText = 'border:1px solid #ccc;border-radius:3px;margin-bottom:8px;overflow:hidden';
   });
-  bodyClone.querySelectorAll('.card-head, .card-t').forEach(h => {
-    h.style.cssText = 'padding:8px 12px;font-weight:600;font-size:12px;background:#f0ece4;border-bottom:1px solid #ddd';
+  bc.querySelectorAll('.card-head').forEach(h => {
+    h.style.cssText = 'padding:4px 8px;font-weight:600;font-size:10px;background:#f0ece4;border-bottom:1px solid #ccc';
   });
-  
-  // Add page-break-inside: avoid to key elements
-  bodyClone.querySelectorAll('.card, .hb, [class*="stat"]').forEach(el => {
-    el.style.pageBreakInside = 'avoid';
+  bc.querySelectorAll('.card-body').forEach(b => { b.style.padding = '0'; });
+  bc.querySelectorAll('.tbl-w').forEach(w => { w.style.overflow = 'visible'; });
+
+  // Badges
+  bc.querySelectorAll('.badge').forEach(b => {
+    b.style.cssText = 'display:inline-block;padding:1px 5px;border-radius:8px;font-size:7px;font-weight:600';
   });
-  // Allow table rows to break
-  bodyClone.querySelectorAll('tr').forEach(tr => {
-    tr.style.pageBreakInside = 'avoid';
-  });
-  
-  wrap.appendChild(bodyClone);
+  bc.querySelectorAll('.b-green').forEach(b => { b.style.background='#e8f5e9'; b.style.color='#2e7d32'; });
+  bc.querySelectorAll('.b-red').forEach(b => { b.style.background='#ffebee'; b.style.color='#c62828'; });
+  bc.querySelectorAll('.b-orange').forEach(b => { b.style.background='#fff3e0'; b.style.color='#e65100'; });
+
+  // Progress bars
+  bc.querySelectorAll('[style*="height:6px"]').forEach(bar => { bar.style.height = '4px'; });
+
+  wrap.appendChild(bc);
 
   const opt = {
-    margin: [8, 8, 8, 8],
+    margin: [6, 6, 8, 6],
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1100 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-    pagebreak: { mode: ['css'], avoid: ['tr', '.card'] }
+    pagebreak: { mode: ['css'], avoid: ['tr'] }
   };
-  
-  // Show loading
+
   const btn = document.querySelector('[onclick*="exportReportPDF"]');
   const origText = btn ? btn.innerHTML : '';
   if (btn) { btn.innerHTML = '⏳ กำลังสร้าง PDF...'; btn.disabled = true; }
-  
   try {
     await html2pdf().set(opt).from(wrap).save();
   } catch(e) {
