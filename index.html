@@ -323,6 +323,18 @@ tbody tr:hover{background:var(--accent-l)}
   .pay-check { margin-top: 6px !important; gap: 10px !important; }
   .pay-check-item { font-size: 11px !important; }
   .pay-check-box { width: 14px !important; height: 14px !important; }
+
+  /* ===== Receipt: fit on ONE page ===== */
+  .receipt-preview {
+    page-break-inside: avoid !important;
+  }
+  .rec-pay-box {
+    margin-top: 12px !important; padding: 8px 12px !important;
+  }
+  .rec-sign-row {
+    margin-top: 16px !important; padding-top: 12px !important; gap: 20px !important;
+  }
+  .receipt-stamp { font-size: 14px !important; }
 }
 </style>
 </head>
@@ -909,7 +921,7 @@ tbody tr:hover{background:var(--accent-l)}
 
 <!-- ============ STAFF: RECEIPT ============ -->
 <div class="page" id="page-staff-receipt">
-  <div class="top-bar"><div><div class="pg-title">🧾 ใบเสร็จรับเงิน</div><div class="pg-desc">ออกอัตโนมัติหลังอนุมัติ — พิมพ์ให้ลูกค้าได้</div></div><div class="flex gap-8"><button class="btn btn-o" onclick="goPage('staff-submit')">← กลับ</button><button class="btn btn-p">🖨️ พิมพ์ใบเสร็จ</button></div></div>
+  <div class="top-bar"><div><div class="pg-title">🧾 ใบเสร็จรับเงิน</div><div class="pg-desc">ออกอัตโนมัติหลังอนุมัติ — พิมพ์ให้ลูกค้าได้</div></div><div class="flex gap-8"><button class="btn btn-o" onclick="goPage('staff-submit')">← กลับ</button><button class="btn btn-p" onclick="window.print()">🖨️ พิมพ์ใบเสร็จ</button></div></div>
   <div class="content">
     <div class="receipt-preview">
       <div class="inv-head">
@@ -927,7 +939,7 @@ tbody tr:hover{background:var(--accent-l)}
       <div style="display:flex;justify-content:flex-end"><div class="inv-total-box"><div style="font-size:11px;opacity:.7">ยอดรับชำระทั้งสิ้น</div><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700" id="rec-total">—</div><div style="font-size:11px;opacity:.7;margin-top:2px" id="rec-total-text">—</div></div></div>
 
       <!-- Payment details -->
-      <div style="margin-top:24px;padding:16px 20px;background:var(--green-l);border-radius:var(--r);border:1px solid rgba(74,122,82,.2)">
+      <div class="rec-pay-box" style="margin-top:24px;padding:16px 20px;background:var(--green-l);border-radius:var(--r);border:1px solid rgba(74,122,82,.2)">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--green);margin-bottom:8px">💳 รายละเอียดการชำระ</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px" id="rec-pay-detail">
           <div><div style="color:var(--text-m);font-size:10px;text-transform:uppercase">ช่องทาง</div><div style="font-weight:600;margin-top:2px" id="rec-channel">—</div></div>
@@ -937,7 +949,7 @@ tbody tr:hover{background:var(--accent-l)}
       </div>
 
       <!-- Signatures -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:32px;padding-top:24px;border-top:2px solid var(--border)">
+      <div class="rec-sign-row" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:32px;padding-top:24px;border-top:2px solid var(--border)">
         <div style="text-align:center"><div class="sign-line"></div><div class="sign-label">ผู้รับเงิน (นำทรัพย์การบัญชี)</div></div>
         <div style="text-align:center"><div class="sign-line"></div><div class="sign-label">ผู้จ่ายเงิน (ลูกค้า)</div></div>
       </div>
